@@ -1,0 +1,12 @@
+main: me.Plugins.Dowsing.DowsingMain
+api-version: 1.20
+name: Dowsing
+version: 2.9
+author: Drefvelin
+
+depend: [MMOItems, MythicLib, ItemsAdder, LoneLibs, SimpleFactions]
+
+commands:
+  dowsing:
+      useage: /<command>
+      description: Dowsing Command

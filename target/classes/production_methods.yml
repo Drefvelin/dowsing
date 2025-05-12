@@ -1,0 +1,11 @@
+#tools
+stone_tools:
+    weight: 0
+	item:
+        name: "§fStone Tools"
+        material: v.stone_pickaxe
+    effects:
+        - time_modifier(150)
+    cost:
+        - v.cobblestone.10
+        - v.stick.4

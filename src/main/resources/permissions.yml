@@ -1,0 +1,3 @@
+dowsing.admin:
+       description: Admin Perms for Dowsing.
+       default: false
