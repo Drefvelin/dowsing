@@ -8,6 +8,7 @@ import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -91,6 +92,7 @@ public class NodeManager implements Listener{
 		return "none";
 }
 	public void start() {
+		particleCycle();
 		new BukkitRunnable()
 		{
 			public void run()
@@ -131,6 +133,20 @@ public class NodeManager implements Listener{
 					}	
 			   }
 		}.runTaskTimer(DowsingMain.plugin, 0L, 1200L);
+	}
+	public void particleCycle(){
+		new BukkitRunnable()
+		{
+			public void run()
+			{
+				for(Node n : nodes){
+					if(n.isClaimable()){
+						Location loc = n.getLoc().clone().add(0.5, 1, 0.5);
+						loc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, loc, 10);
+					}
+				}	
+			}
+		}.runTaskTimer(DowsingMain.plugin, 0L, 5L);
 	}
 	public void validate() {
 		for(int i = 0; i<nodes.size();i++) {
@@ -193,8 +209,13 @@ public class NodeManager implements Listener{
 			e.setCancelled(true);
 			return;
 		}
-		if(getNodeAmount(f)-getNodeCapacity(f) > 1) {
-			p.sendMessage("§cYou are already 2 nodes over capacity!");
+		if(f.getMembers().size() < Cache.minMembersForNode){
+			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to have a node!");
+			e.setCancelled(true);
+			return;
+		}
+		if(getNodeAmount(f)-getNodeCapacity(f) >= 0) {
+			p.sendMessage("§cYou are already filled your node capacity!");
 			e.setCancelled(true);
 			return;
 		}
@@ -230,7 +251,7 @@ public class NodeManager implements Listener{
 		for(int i = 0; i<nodes.size(); i++) {
 			Node n = nodes.get(i);
 			if(n.getFaction().getId().equalsIgnoreCase(e.getFaction().getId())) {
-				n.setHasFaction(false);
+				n.setFaction(null);;
 			}
 		}
 	}
@@ -242,6 +263,22 @@ public class NodeManager implements Listener{
 		Node n = getByLocation(e.getClickedBlock().getLocation());
 		InventoryManager inv = new InventoryManager();
 		e.setCancelled(true);
+		if(n.isClaimable()){
+			Faction f = FactionManager.getByLeader(p.getName());
+			if(f == null) {
+				p.sendMessage("§cMust be a faction leader to claim an unclaimed node!");
+				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+				return;
+			}
+			if(!n.canClaim(p, f)) return;
+			p.sendMessage("§aClaimed Node");
+			n.setFaction(FactionManager.getByLeader(p.getName()));
+			p.getLocation().getWorld().playSound(n.getLoc(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
+			n.update();
+			inv.nodeView(p, n);
+			currentNode.put(p, n);
+			return;
+		}
 		if(!n.hasFaction()) {
 			n.breakNode();
 			nodes.remove(n);
@@ -315,7 +352,8 @@ public class NodeManager implements Listener{
 				}
 				n.update();
 				inv.updateNodeView(p, n, e.getClickedInventory());
-			}  else if(e.getSlot() == 18) {
+			} else if(e.getSlot() == 18) {
+				if(!n.getBlock().isBreakable()) return;
 				if(n.getIsActive()) {
 					p.sendMessage("§cCannot delete node while active");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
@@ -324,7 +362,13 @@ public class NodeManager implements Listener{
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 				confirm.put(p, ConfirmType.DELETE_NODE);
 				inv.confirmView(p);
-			}else{
+			} else if(e.getSlot() == 6) {
+				if(!n.getBlock().isTransferable()) return;
+				n.setFaction(null);
+				p.sendMessage("§aNode set as claimable");
+				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
+				p.closeInventory();
+			} else{
 				for(NodeSlot slot : n.getCurrentType().getSlots()) {
 					if(slot.getSlot().equals(e.getSlot())) {
 						if(n.getIsActive()) {

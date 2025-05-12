@@ -42,5 +42,6 @@ public class ConfigLoader {
 		} else {
 			Cache.refundPercentage = 0.8;
 		}
+		Cache.minMembersForNode = config.getInt("min-members-for-node", 1);
 	}
 }

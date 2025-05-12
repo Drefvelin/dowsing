@@ -23,6 +23,7 @@ import me.Plugins.Dowsing.Objects.ProductionMethod;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemCreator;
 import me.Plugins.SimpleFactions.Objects.Faction;
+import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class InventoryManager {
 	ItemCreator ic = new ItemCreator();
@@ -36,6 +37,7 @@ public class InventoryManager {
 		if(n.getNaturalYield() > 0) {
 			i.setItem(0, ic.createNaturalYieldItem(n));
 		}
+		if(n.getBlock().isTransferable()) i.setItem(6, createTransferItem());
 		i.setItem(8, createUpgrade(n));
 		i.setItem(26, createDowngrade(n));
 		if(n.getFaction().canPurchaseCapacity()) {
@@ -44,7 +46,7 @@ public class InventoryManager {
 		i.setItem(15, createGlobe(n));
 		i.setItem(16, createCycle(n));
 		i.setItem(17, createStatus(n));
-		i.setItem(18, createDeleteButton());
+		if(n.getBlock().isBreakable()) i.setItem(18, createDeleteButton());
 		Integer slot = 0;
 		while(slot < i.getSize()) {
 			if(i.getItem(slot) == null) {
@@ -223,6 +225,19 @@ public class InventoryManager {
 		ItemStack i = ic.createTypeItemNode(n, t);
 		return i;
 	}
+	ItemStack createTransferItem() {
+		ItemStack i = new ItemStack(Material.PAPER, 1);
+		ItemMeta m = i.getItemMeta();
+		m.setDisplayName(StringFormatter.formatHex("#4da866Transfer Node"));
+		List<String> lore = new ArrayList<String>();
+		lore.add("§7Click to mark the node as §eClaimable");
+		lore.add("§7Any faction leader that interacts with");
+		lore.add("§7this node will claim it.");
+		m.setLore(lore);
+		i.setItemMeta(m);
+		return i;
+	}
+
 	ItemStack createGlobe(Node n) {
 		Faction f = n.getFaction();
 		ItemStack i = getItemsAdderItem("mcicons:icon_web");

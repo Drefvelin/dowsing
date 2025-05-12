@@ -13,13 +13,16 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import dev.lone.itemsadder.api.CustomFurniture;
 import me.Plugins.Dowsing.Cache;
+import me.Plugins.Dowsing.DowsingMain;
 import me.Plugins.Dowsing.Managers.NodeManager;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemDropper;
 import me.Plugins.Dowsing.Utils.NodeEngine;
+import me.Plugins.SimpleFactions.Loaders.TierLoader;
 import me.Plugins.SimpleFactions.Objects.Faction;
 import me.Plugins.SimpleFactions.Objects.Modifier;
 import me.Plugins.SimpleFactions.Utils.Formatter;
@@ -48,8 +51,10 @@ public class Node {
 	Double timeModifier;
 	Integer inputCounter;
 	Integer extraction;
-	Boolean hasFaction;
 	Double upkeep;
+
+	private boolean claimable = false;
+
 	public Double getUpkeep() {
 		return upkeep;
 	}
@@ -63,10 +68,7 @@ public class Node {
 		this.id = id;
 	}
 	public Boolean hasFaction() {
-		return hasFaction;
-	}
-	public void setHasFaction(Boolean hasFaction) {
-		this.hasFaction = hasFaction;
+		return faction != null;
 	}
 	public Integer getExtraction() {
 		return extraction;
@@ -201,12 +203,34 @@ public class Node {
 	public void setCostIncrease(Double costIncrease) {
 		this.costIncrease = costIncrease;
 	}
+	public boolean isClaimable() {
+		return (faction == null && block.isSpecial()) || claimable;
+	}
+
+	public boolean canClaim(Player p, Faction f){
+		if(!isClaimable()) return false; //safeguard
+		if(f.getMembers().size() < Cache.minMembersForNode){
+			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to claim this node!");
+			return false;
+		}
+		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) >= 0) {
+			p.sendMessage("§cYou are already filled your node capacity!");
+			return false;
+		}
+		if(f.getTier().getTier() < block.getTier()) {
+			p.sendMessage("§cYour faction tier must be at least "+TierLoader.getByLevel(block.getTier()).getName()+" §7(currently "+f.getTier().getName()+"§7) §c to claim this node!");
+			return false;
+		}
+		return true;
+	}
+
 	public Node(Location l, Faction f, NodeBlock b) {
 		this.id = UUID.randomUUID();
 		this.block = b;
 		this.loc = l;
-		this.faction = f;
-		this.hasFaction = true;
+		if(!b.isSpecial()){
+			this.faction = f;
+		}
 		this.isActive = false;
 		this.level = 1;
 		this.yield = 0;
@@ -219,7 +243,6 @@ public class Node {
 		try {
 			this.naturalYield = getNaturalYieldFromChunk(this.currentType.getResource(), this.loc);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		this.timeLeft = currentType.getTimer();
@@ -227,7 +250,7 @@ public class Node {
 		this.inputCounter = 0;
 		this.multiplier = 1;
 		this.costIncrease = 1.0;
-		update();
+		if(!isClaimable()) update();
 		
 	}
 	public Node(UUID id, NodeBlock b, Location l, Faction f, Boolean active, int lvl, int cycleTime, NodeType currentType, int timeLeft, int inputCounter) {
@@ -236,10 +259,8 @@ public class Node {
 		this.loc = l;
 		if(f != null) {
 			this.faction = f;
-			this.hasFaction = true;
 		} else {
 			this.faction = null;
-			this.hasFaction = false;
 		}
 		this.isActive = active;
 		this.level = lvl;
@@ -258,7 +279,7 @@ public class Node {
 		this.multiplier = 1;
 		this.costIncrease = 1.0;
 		this.currentType = currentType;
-		update();
+		if(!isClaimable()) update();
 	}
 	Integer getNaturalYieldFromChunk(NodeBlock b, Location l) throws NumberFormatException, IOException {
 		Database db = new Database();
@@ -272,10 +293,10 @@ public class Node {
 		return 0;
 	}
 	public void tick() {
-		this.timeLeft = this.timeLeft-1;
+		if(!isClaimable()) this.timeLeft = this.timeLeft-1;
 	}
 	public void tickCycle() {
-		this.cycleTime = this.cycleTime+1;
+		if(!isClaimable()) this.cycleTime = this.cycleTime+1;
 	}
 	public void input() {
 		NodeEngine ng = new NodeEngine();
@@ -334,6 +355,7 @@ public class Node {
 		ng.refund(this);;
 	}
 	public void activate() {
+		if(isClaimable()) return;
 		NodeEngine ng = new NodeEngine();
 		Boolean failed = false;
 		this.errors.clear();
@@ -388,6 +410,7 @@ public class Node {
 	}
 	public void deActivate() {
 		this.isActive = false;
+		if(isClaimable()) return;
 		this.faction.addPersistentPrestigeModifier(new Modifier("Nodes", this.prestigeGain*-1));
 		this.faction.updatePrestige();
 		if(this.cycleTime > 0 && this.cycleTime < Cache.cycleLength) {
@@ -397,6 +420,7 @@ public class Node {
 		}
 	}
 	public void update() {
+		if(isClaimable()) return;
 		this.yield = 0;
 		this.timeModifier = 0.0;
 		this.addedDrops = new ArrayList<String>();
@@ -431,7 +455,7 @@ public class Node {
 				newWealthModifier = newWealthModifier+l.getCost();
 			}
 		}
-		if(this.hasFaction) {
+		if(faction != null) {
 			if(this.isActive) {
 				if(this.prestigeGain != newPrestige) {
 					this.faction.addPersistentPrestigeModifier(new Modifier("Nodes", (this.prestigeGain-newPrestige)*-1));

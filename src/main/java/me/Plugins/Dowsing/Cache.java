@@ -11,4 +11,6 @@ public class Cache {
 	public static double extraCapacityCost;
 	
 	public static int maxMemberCapacity;
+
+	public static int minMembersForNode;
 }

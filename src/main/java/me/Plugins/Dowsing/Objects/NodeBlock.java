@@ -12,6 +12,13 @@ public class NodeBlock {
 	String resource;
 	String block;
 	List<NodeType> types = new ArrayList<NodeType>();
+
+	private boolean breakable = true;
+	private boolean transferable = true;
+	private boolean special = false;
+
+	private int tier;
+
 	public String getResource() {
 		return resource;
 	}
@@ -36,6 +43,18 @@ public class NodeBlock {
 	public void setTypes(List<NodeType> types) {
 		this.types = types;
 	}
+	public boolean isBreakable() {
+		return breakable;
+	}
+	public boolean isTransferable(){
+		return transferable;
+	}
+	public boolean isSpecial() {
+		return special;
+	}
+	public int getTier(){
+		return tier;
+	}
 	public NodeBlock(String key, ConfigurationSection config) {
 		this.id = key;
 		this.block = config.getString("block");
@@ -45,6 +64,10 @@ public class NodeBlock {
 			l.add(TypeLoader.getByString(s));
 		}
 		this.types = l;
+		breakable = config.getBoolean("breakable", true);
+		transferable = config.getBoolean("transferable", true);
+		special = config.getBoolean("special", false);
+		tier = config.getInt("tier", 0);
 	}
 	public NodeBlock(NodeBlock another) {
 		this.id = another.id;
@@ -53,5 +76,9 @@ public class NodeBlock {
 		for(NodeType t : another.types) {
 			this.types.add(new NodeType(t));
 		}
+		this.breakable = another.isBreakable();
+		this.transferable = another.isTransferable();
+		this.special = another.isSpecial();
+		this.tier = another.getTier();
 	}
 }

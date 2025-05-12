@@ -34,10 +34,13 @@ public class DowsingMain extends JavaPlugin{
 	ResourceManager resourceManager = new ResourceManager();
 	
 	CommandManager commands = new CommandManager();
-	NodeManager nodeManager = new NodeManager();
+	private static final NodeManager nodeManager = new NodeManager();
 	
 	Database db = new Database();
 	
+	public static NodeManager getNodeManager() {
+		return nodeManager;
+	}
 	
 	public static Boolean isReloading = false;
 	@Override

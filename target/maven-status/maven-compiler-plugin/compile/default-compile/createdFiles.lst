@@ -1,4 +1,5 @@
 me\Plugins\Dowsing\Utils\TabCompletion.class
+me\Plugins\Dowsing\Managers\NodeManager$2.class
 me\Plugins\Dowsing\Loaders\ConfigLoader.class
 me\Plugins\Dowsing\Managers\NodeManager.class
 me\Plugins\Dowsing\Utils\Database.class
