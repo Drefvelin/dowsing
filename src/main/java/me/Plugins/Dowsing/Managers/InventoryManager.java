@@ -27,7 +27,7 @@ import me.Plugins.SimpleFactions.Objects.Faction;
 public class InventoryManager {
 	ItemCreator ic = new ItemCreator();
 	public void nodeView(Player player, Node n) {
-		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "§7"+n.getBlock().getResource()+" Node");
+		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "Â§7"+n.getBlock().getResource()+" Node");
 		i.setItem(9, createMainItem(n, n.getCurrentType()));
 		for(NodeSlot ns : n.getCurrentType().getSlots()) {
 			ns.getActivePm().setMenuItem(ic.updateMenuItem(n, ns.getActivePm()));
@@ -50,7 +50,7 @@ public class InventoryManager {
 			if(i.getItem(slot) == null) {
 				ItemStack fill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
 				ItemMeta fm = fill.getItemMeta();
-				fm.setDisplayName("§8 ");
+				fm.setDisplayName("Â§8 ");
 				fill.setItemMeta(fm);
 				i.setItem(slot, fill);
 			}
@@ -59,7 +59,7 @@ public class InventoryManager {
 		player.openInventory(i);
 	}
 	public void slotView(Player player, Node n, NodeSlot slot) {
-		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "§7"+n.getBlock().getResource()+" Node: "+WordUtils.capitalize(slot.getId().replace("_", " ")));
+		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "Â§7"+n.getBlock().getResource()+" Node: "+WordUtils.capitalize(slot.getId().replace("_", " ")));
 		for(int y = 0; y<slot.getPms().size(); y++) {
 			ProductionMethod pm = slot.getPms().get(y);
 			pm.setMenuItem(ic.updateMenuItem(n, pm));
@@ -71,7 +71,7 @@ public class InventoryManager {
 				m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 				List<String> lore = m.getLore();
 				lore.add(" ");
-				lore.add("§aCURRENT");
+				lore.add("Â§aCURRENT");
 				m.setLore(lore);
 				item.setItemMeta(m);
 			}
@@ -83,7 +83,7 @@ public class InventoryManager {
 			if(i.getItem(slotn) == null) {
 				ItemStack fill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
 				ItemMeta fm = fill.getItemMeta();
-				fm.setDisplayName("§8 ");
+				fm.setDisplayName("Â§8 ");
 				fill.setItemMeta(fm);
 				i.setItem(slotn, fill);
 			}
@@ -92,7 +92,7 @@ public class InventoryManager {
 		player.openInventory(i);
 	}
 	public void typeView(Player player, Node n) {
-		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "§7"+n.getBlock().getResource()+" Node: Type");
+		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "Â§7"+n.getBlock().getResource()+" Node: Type");
 		for(int y = 0; y<n.getBlock().getTypes().size(); y++) {
 			NodeType t = n.getBlock().getTypes().get(y);
 			ItemStack item = createMainItem(n, t);
@@ -106,7 +106,7 @@ public class InventoryManager {
 							ItemMeta m = item.getItemMeta();
 							List<String> lore = m.getLore();
 							lore.add(" ");
-							lore.add("§2Natural Yield Detected!");
+							lore.add("Â§2Natural Yield Detected!");
 							m.setLore(lore);
 							item.setItemMeta(m);
 						}
@@ -123,7 +123,7 @@ public class InventoryManager {
 				m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 				List<String> lore = m.getLore();
 				lore.add(" ");
-				lore.add("§aCURRENT");
+				lore.add("Â§aCURRENT");
 				m.setLore(lore);
 				item.setItemMeta(m);
 			}
@@ -132,9 +132,9 @@ public class InventoryManager {
 				ItemMeta m = item.getItemMeta();
 				List<String> lore = m.getLore();
 				lore.add(" ");
-				lore.add("§eOnly useable in:");
+				lore.add("Â§eOnly useable in:");
 				for(String biome : t.getBiomes()) {
-					lore.add("§7- "+WordUtils.capitalize(biome.toLowerCase().replace("_", " ")));
+					lore.add("Â§7- "+WordUtils.capitalize(biome.toLowerCase().replace("_", " ")));
 				}
 				m.setLore(lore);
 				item.setItemMeta(m);
@@ -143,7 +143,7 @@ public class InventoryManager {
 			ItemMeta m = item.getItemMeta();
 			List<String> lore = m.getLore();
 			lore.add(" ");
-			lore.add("§4Warning! §cChanging type will reset the node to level 1!");
+			lore.add("Â§4Warning! Â§cChanging type will reset the node to level 1!");
 			m.setLore(lore);
 			item.setItemMeta(m);
 			i.setItem(y, item);
@@ -154,7 +154,7 @@ public class InventoryManager {
 			if(i.getItem(slotn) == null) {
 				ItemStack fill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
 				ItemMeta fm = fill.getItemMeta();
-				fm.setDisplayName("§8 ");
+				fm.setDisplayName("Â§8 ");
 				fill.setItemMeta(fm);
 				i.setItem(slotn, fill);
 			}
@@ -163,15 +163,15 @@ public class InventoryManager {
 		player.openInventory(i);
 	}
 	public void confirmView(Player player) {
-		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "§7Confirm Action");
-		i.setItem(11, createItemStack(Material.GREEN_CONCRETE, "§aConfirm"));
-		i.setItem(15, createItemStack(Material.RED_CONCRETE, "§cCancel"));
+		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "Â§7Confirm Action");
+		i.setItem(11, createItemStack(Material.GREEN_CONCRETE, "Â§aConfirm"));
+		i.setItem(15, createItemStack(Material.RED_CONCRETE, "Â§cCancel"));
 		Integer slot = 0;
 		while(slot < i.getSize()) {
 			if(i.getItem(slot) == null) {
 				ItemStack fill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
 				ItemMeta fm = fill.getItemMeta();
-				fm.setDisplayName("§8 ");
+				fm.setDisplayName("Â§8 ");
 				fill.setItemMeta(fm);
 				i.setItem(slot, fill);
 			}
@@ -205,7 +205,7 @@ public class InventoryManager {
 			if(i.getItem(slot) == null) {
 				ItemStack fill = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
 				ItemMeta fm = fill.getItemMeta();
-				fm.setDisplayName("§8 ");
+				fm.setDisplayName("Â§8 ");
 				fill.setItemMeta(fm);
 				i.setItem(slot, fill);
 			}
@@ -227,31 +227,31 @@ public class InventoryManager {
 		Faction f = n.getFaction();
 		ItemStack i = getItemsAdderItem("mcicons:icon_web");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§eBelongs to: "+f.getName());
+		m.setDisplayName("Â§eBelongs to: "+f.getName());
 		List<String> lore = new ArrayList<String>();
-		lore.add("§7"+f.getRulerTitle()+": §f"+f.getLeader());
+		lore.add("Â§7"+f.getRulerTitle()+": Â§f"+f.getLeader());
 		if(NodeManager.getNodeAmount(f) < n.getCapacity()) {
-			lore.add("§eNodes: §a"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
+			lore.add("Â§eNodes: Â§a"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
 		} else if(NodeManager.getNodeAmount(f) == n.getCapacity()){
-			lore.add("§eNodes: §e"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
+			lore.add("Â§eNodes: Â§e"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
 		} else {
-			lore.add("§eNodes: §c"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
+			lore.add("Â§eNodes: Â§c"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
 		}
-		lore.add("§eCost Multiplier: §a"+n.getMultiplier());
+		lore.add("Â§eCost Multiplier: Â§a"+n.getMultiplier());
 		if(n.getCostIncrease() > 1.0) {
-			lore.add("§eUpgrade/Upkeep Cost Multiplier: §c"+((n.getCostIncrease()-1.0)*100)+"%");
+			lore.add("Â§eUpgrade/Upkeep Cost Multiplier: Â§c"+((n.getCostIncrease()-1.0)*100)+"%");
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);
 		return i;
 	}
 	ItemStack createCapacityButton(Node n) {
-		ItemStack i = createItemStack(Material.NETHER_STAR, "§aPurchase Extra Capacity");
+		ItemStack i = createItemStack(Material.NETHER_STAR, "Â§aPurchase Extra Capacity");
 		ItemMeta m = i.getItemMeta();
 		List<String> lore = new ArrayList<String>();
-		lore.add("§a+1 Node Capacity");
+		lore.add("Â§a+1 Node Capacity");
 		lore.add(" ");
-		lore.add("§7Cost: §6"+n.getNodeCapacityCost()+"d");
+		lore.add("Â§7Cost: Â§6"+n.getNodeCapacityCost()+"d");
 		m.setLore(lore);
 		i.setItemMeta(m);
 		return i;
@@ -259,19 +259,19 @@ public class InventoryManager {
 	ItemStack createBackButton() {
 		ItemStack i = getItemsAdderItem("mcicons:icon_cancel");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§fBack");
+		m.setDisplayName("Â§fBack");
 		i.setItemMeta(m);
 		return i;
 	}
 	ItemStack createDeleteButton() {
 		ItemStack i = getItemsAdderItem("mcicons:icon_cancel");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§cDelete Node");
+		m.setDisplayName("Â§cDelete Node");
 		List<String> lore = new ArrayList<String>();
-		lore.add("§7Cannot be undone");
+		lore.add("Â§7Cannot be undone");
 		lore.add(" ");
-		lore.add("§cOnly the node block is refunded");
-		lore.add("§cAll other items/upgrades are lost!");
+		lore.add("Â§cOnly the node block is refunded");
+		lore.add("Â§cAll other items/upgrades are lost!");
 		m.setLore(lore);
 		i.setItemMeta(m);
 		return i;
@@ -279,11 +279,11 @@ public class InventoryManager {
 	ItemStack createCycle(Node n) {
 		ItemStack i = getItemsAdderItem("mcicons:icon_refresh");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§9Last Cycle Result: ");
+		m.setDisplayName("Â§9Last Cycle Result: ");
 		List<String> lore = new ArrayList<String>();
-		lore.add("§7Extracted:");
+		lore.add("Â§7Extracted:");
 		if(n.getLastResult().size() == 0) {
-			lore.add("§fNothing");
+			lore.add("Â§fNothing");
 		} else {
 			for(String s : n.getLastResult().keySet()) {
 				s = s+"("+n.getLastResult().get(s)+")";
@@ -299,23 +299,23 @@ public class InventoryManager {
 		if(!n.getIsActive()) {
 			i.setType(Material.RED_STAINED_GLASS_PANE);
 			ItemMeta m = i.getItemMeta();
-			m.setDisplayName("§cINACTIVE");
+			m.setDisplayName("Â§cINACTIVE");
 			if(n.getErrors().size() > 0) {
 				m.setLore(n.getErrors());
 			}
 			i.setItemMeta(m);
 		} else {
 			ItemMeta m = i.getItemMeta();
-			m.setDisplayName("§aACTIVE");
+			m.setDisplayName("Â§aACTIVE");
 			List<String> lore = new ArrayList<String>();
-			lore.add("§7Time until next output: §f"+ic.formatTime(n.getTimeLeft()));
-			lore.add("§7Time until next input: §f"+ic.formatTime(Cache.cycleLength-n.getCycleTime()));
+			lore.add("Â§7Time until next output: Â§f"+ic.formatTime(n.getTimeLeft()));
+			lore.add("Â§7Time until next input: Â§f"+ic.formatTime(Cache.cycleLength-n.getCycleTime()));
 			lore.add(" ");
-			lore.add("§eClick to Deactivate");
+			lore.add("Â§eClick to Deactivate");
 			lore.add(" ");
-			lore.add("§4WARNING!");
-			lore.add("§cDeactivating resets the current cycle!");
-			lore.add("§cThe cost of the current cycle will be refunded.");
+			lore.add("Â§4WARNING!");
+			lore.add("Â§cDeactivating resets the current cycle!");
+			lore.add("Â§cThe cost of the current cycle will be refunded.");
 			m.setLore(lore);
 			i.setItemMeta(m);
 		}
@@ -324,20 +324,20 @@ public class InventoryManager {
 	ItemStack createUpgrade(Node n) {
 		ItemStack i = getItemsAdderItem("mcicons:icon_up_gray");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§eCurrent Level: §a"+n.getLevel());
+		m.setDisplayName("Â§eCurrent Level: Â§a"+n.getLevel());
 		List<String> lore = new ArrayList<String>();
 		if(n.getLevel() < n.getCurrentType().getMaxLevel()) {
 			Double cost = n.getCurrentType().getLevels().get(n.getLevel()).getCost();
 			cost = cost*n.getCostIncrease();
-			lore.add("§7Upgrade to level "+(n.getLevel()+1)+": §f"+cost+"d");
+			lore.add("Â§7Upgrade to level "+(n.getLevel()+1)+": Â§f"+cost+"d");
 		} else {
-			lore.add("§7Max level");
+			lore.add("Â§7Max level");
 		}
 		for(String s : ic.getUpgradeDownGradeFormatted(n, "upgrade")) {
 			lore.add(s);
 		}
 		if(n.getLevel() < n.getCurrentType().getMaxLevel()) {
-			lore.add("§bClick to Upgrade!");
+			lore.add("Â§bClick to Upgrade!");
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);
@@ -346,19 +346,19 @@ public class InventoryManager {
 	ItemStack createDowngrade(Node n) {
 		ItemStack i = getItemsAdderItem("mcicons:icon_down_gray");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§eCurrent Level: §a"+n.getLevel());
+		m.setDisplayName("Â§eCurrent Level: Â§a"+n.getLevel());
 		List<String> lore = new ArrayList<String>();
 		if(n.getLevel() > 1) {
-			lore.add("§7Downgrade to level "+(n.getLevel()-1));
-			lore.add("§7Refunds: §f"+(n.getCurrentType().getLevels().get(n.getLevel()-1).getCost()*Cache.refundPercentage)+"d §7("+Cache.refundPercentage*100+"%)");
+			lore.add("Â§7Downgrade to level "+(n.getLevel()-1));
+			lore.add("Â§7Refunds: Â§f"+(n.getCurrentType().getLevels().get(n.getLevel()-1).getCost()*Cache.refundPercentage)+"d Â§7("+Cache.refundPercentage*100+"%)");
 		} else {
-			lore.add("§7Lowest level");
+			lore.add("Â§7Lowest level");
 		}
 		for(String s : ic.getUpgradeDownGradeFormatted(n, "downgrade")) {
 			lore.add(s);
 		}
 		if(n.getLevel() > 1) {
-			lore.add("§bClick to Downgrade!");
+			lore.add("Â§bClick to Downgrade!");
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);

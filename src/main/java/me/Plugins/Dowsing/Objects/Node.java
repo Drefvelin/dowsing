@@ -20,7 +20,6 @@ import me.Plugins.Dowsing.Managers.NodeManager;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemDropper;
 import me.Plugins.Dowsing.Utils.NodeEngine;
-import me.Plugins.SimpleFactions.SimpleFactions;
 import me.Plugins.SimpleFactions.Objects.Faction;
 import me.Plugins.SimpleFactions.Objects.Modifier;
 import me.Plugins.SimpleFactions.Utils.Formatter;
@@ -284,17 +283,17 @@ public class Node {
 		this.errors.clear();
 		if(!ng.hasBarrel(this)) {
 			failed = true;
-			this.errors.add("§7No barrel");
+			this.errors.add("ï¿½7No barrel");
 		}
 		if(!ng.hasHopper(this)) {
 			failed = true;
-			this.errors.add("§7No hopper");
-			this.errors.add("§7Lacking resources");
+			this.errors.add("ï¿½7No hopper");
+			this.errors.add("ï¿½7Lacking resources");
 		}
 		if(ng.hasBarrel(this)) {
 			if(!ng.hasInputs(this)) {
 				failed = true;
-				this.errors.add("§7Lacking resources");
+				this.errors.add("ï¿½7Lacking resources");
 			}
 		}
 		if(failed) {
@@ -312,17 +311,17 @@ public class Node {
 		this.errors.clear();
 		if(!ng.hasBarrel(this)) {
 			failed = true;
-			this.errors.add("§7No barrel");
+			this.errors.add("ï¿½7No barrel");
 		}
 		if(!ng.hasHopper(this)) {
 			failed = true;
-			this.errors.add("§7No hopper");
-			this.errors.add("§7Lacking resources");
+			this.errors.add("ï¿½7No hopper");
+			this.errors.add("ï¿½7Lacking resources");
 		}
 		if(ng.hasBarrel(this)) {
 			if(!ng.hasInputs(this)) {
 				failed = true;
-				this.errors.add("§7Lacking resources");
+				this.errors.add("ï¿½7Lacking resources");
 			}
 		}
 		if(failed) {
@@ -340,40 +339,40 @@ public class Node {
 		this.errors.clear();
 		if(!ng.hasBarrel(this)) {
 			failed = true;
-			this.errors.add("§7No barrel");
+			this.errors.add("ï¿½7No barrel");
 		}
 		if(!ng.hasHopper(this)) {
 			failed = true;
-			this.errors.add("§7No hopper");
-			this.errors.add("§7Lacking resources");
+			this.errors.add("ï¿½7No hopper");
+			this.errors.add("ï¿½7Lacking resources");
 		}
 		if(ng.hasBarrel(this)) {
 			if(!ng.hasInputs(this)) {
 				failed = true;
-				this.errors.add("§7Lacking resources");
+				this.errors.add("ï¿½7Lacking resources");
 			}
 		}
 		if(this.faction.getBank() == null) {
 			failed = true;
-			this.errors.add("§7No bank");
+			this.errors.add("ï¿½7No bank");
 		}
 		if(this.faction.getBank() != null) {
 			if(this.faction.getBank().getWealth() < this.upkeep) {
 				failed = true;
-				this.errors.add("§7Lacking upkeep");
+				this.errors.add("ï¿½7Lacking upkeep");
 			}
 		}
 		if(this.currentType.getBiomes().size() > 0) {
 			String biome = this.loc.getBlock().getBiome().toString();
 			if(!this.currentType.getBiomes().contains(biome)) {
 				failed = true;
-				this.errors.add("§7Wrong biome, change type");
+				this.errors.add("ï¿½7Wrong biome, change type");
 			}
 		}
 		for(NodeSlot slot : this.currentType.getSlots()) {
 			if(!ng.checkPrerequisite(slot.getActivePm(), this)) {
 				failed = true;
-				this.errors.add("§7"+WordUtils.capitalize(slot.getActivePm().getId().replace("_", " ") +" requires at least "+ WordUtils.capitalize(slot.getActivePm().getPrerequisite().replace("_", " "))));
+				this.errors.add("ï¿½7"+WordUtils.capitalize(slot.getActivePm().getId().replace("_", " ") +" requires at least "+ WordUtils.capitalize(slot.getActivePm().getPrerequisite().replace("_", " "))));
 			}
 		}
 		if(failed) {
