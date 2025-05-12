@@ -73,18 +73,18 @@ public class ItemCreator {
 				lore.add(getFormattedEffect(s));
 			}
 		} else {
-			lore.add("§7No Effects");
+			lore.add("Â§7No Effects");
 		}
 		if(cost.size() != 0) {
-			lore.add("§7Cost:");
+			lore.add("Â§7Cost:");
 			for(String s : cost) {
 				lore.add(getFormattedCost(s, 1));
 			}
 		} else {
-			lore.add("§7No Cost");
+			lore.add("Â§7No Cost");
 		}
 		if(!prerequisite.equalsIgnoreCase("none")) {
-			lore.add("§7Requires at least: §f"+WordUtils.capitalize(new String(prerequisite).replace("_", "")));
+			lore.add("Â§7Requires at least: Â§f"+WordUtils.capitalize(new String(prerequisite).replace("_", "")));
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);
@@ -102,18 +102,18 @@ public class ItemCreator {
 				lore.add(getFormattedEffect(s));
 			}
 		} else {
-			lore.add("§7No Effects");
+			lore.add("Â§7No Effects");
 		}
 		if(pm.getInputs().size() != 0) {
-			lore.add("§7Cost:");
+			lore.add("Â§7Cost:");
 			for(String s : pm.getInputs()) {
 				lore.add(getFormattedCost(s, n.getMultiplier()));
 			}
 		} else {
-			lore.add("§7No Cost");
+			lore.add("Â§7No Cost");
 		}
 		if(!pm.getPrerequisite().equalsIgnoreCase("none")) {
-			lore.add("§7Requires at least: §f"+WordUtils.capitalize(new String(pm.getPrerequisite()).replace("_", " ")));
+			lore.add("Â§7Requires at least: Â§f"+WordUtils.capitalize(new String(pm.getPrerequisite()).replace("_", " ")));
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);
@@ -150,21 +150,21 @@ public class ItemCreator {
 		ItemMeta m = i.getItemMeta();
 		m.setDisplayName(t.getName());
 		if(n.getModifiedTime() != t.getTimer()) {
-			lore.add("§eTime: §f"+formatTime(n.getModifiedTime())+" §7(from "+formatTime(t.getTimer())+")");
+			lore.add("Â§eTime: Â§f"+formatTime(n.getModifiedTime())+" Â§7(from "+formatTime(t.getTimer())+")");
 		} else {
-			lore.add("§eTime: §f"+formatTime(n.getModifiedTime()));
+			lore.add("Â§eTime: Â§f"+formatTime(n.getModifiedTime()));
 		}
-		lore.add("§eYield: §a"+n.getYield());
+		lore.add("Â§eYield: Â§a"+n.getYield());
 		Formatter format = new Formatter();
-		lore.add("§eTotal Upkeep: §f"+format.formatDouble(n.getUpkeep()*n.getCostIncrease())+"d");
-		lore.add("§7Possible Drops:");
+		lore.add("Â§eTotal Upkeep: Â§f"+format.formatDouble(n.getUpkeep()*n.getCostIncrease())+"d");
+		lore.add("Â§7Possible Drops:");
 		Double maxWeight = 0.0;
 		for(String s : n.getCompleteDrop().keySet()) {
 			Double amount = n.getCompleteDrop().get(s);
 			maxWeight = maxWeight+amount;
 		}
 		for(String s : n.getCompleteDrop().keySet()) {
-			lore.add("§f"+getFormattedDrop(s, n.getCompleteDrop().get(s), maxWeight));
+			lore.add("Â§f"+getFormattedDrop(s, n.getCompleteDrop().get(s), maxWeight));
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);
@@ -173,12 +173,12 @@ public class ItemCreator {
 	public ItemStack createNaturalYieldItem(Node n) {
 		ItemStack i = new ItemStack(Material.EMERALD, 1);
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§aChunk has a natural yield of §e"+n.getNaturalYield()+"§a for §e"+WordUtils.capitalize(n.getCurrentType().getResource()));
+		m.setDisplayName("Â§aChunk has a natural yield of Â§e"+n.getNaturalYield()+"Â§a for Â§e"+WordUtils.capitalize(n.getCurrentType().getResource()));
 		List<String> lore = new ArrayList<String>();
-		lore.add("§7Bonuses will be applied depending on Extraction level");
-		lore.add("§eCurrent Extraction: §f"+n.getExtraction()+" §7(max "+n.getNaturalYield()+")");
-		lore.add("§eTime Modifier per Extraction: §a"+n.getCurrentType().getTimeNaturalYield()+"%");
-		lore.add("§a"+n.getCurrentType().getYieldNaturalYield()+" §eExtraction per §a1 §eYield");
+		lore.add("Â§7Bonuses will be applied depending on Extraction level");
+		lore.add("Â§eCurrent Extraction: Â§f"+n.getExtraction()+" Â§7(max "+n.getNaturalYield()+")");
+		lore.add("Â§eTime Modifier per Extraction: Â§a"+n.getCurrentType().getTimeNaturalYield()+"%");
+		lore.add("Â§a"+n.getCurrentType().getYieldNaturalYield()+" Â§eExtraction per Â§a1 Â§eYield");
 		m.setLore(lore);
 		i.setItemMeta(m);
 		return i;
@@ -234,39 +234,39 @@ public class ItemCreator {
 			}
 		}
 		if(newPrestige > 0 || oldPrestige > 0) {
-			list.add(oldNewInteger(oldPrestige, newPrestige, "§9Prestige", false));
+			list.add(oldNewInteger(oldPrestige, newPrestige, "Â§9Prestige", false));
 		}
-		list.add(oldNewInteger(oldYield, newYield, "§eYield", false));
+		list.add(oldNewInteger(oldYield, newYield, "Â§eYield", false));
 		if((newExtraction > 0 || oldExtraction > 0) && n.getNaturalYield() > 0) {
-			list.add(oldNewInteger(oldExtraction, newExtraction, "§eExtraction", false));
+			list.add(oldNewInteger(oldExtraction, newExtraction, "Â§eExtraction", false));
 		}
 		if(newUpkeep > 0 || oldUpkeep > 0) {
-			list.add(oldNewUpkeep(oldUpkeep, newUpkeep, "§eUpkeep", true));
+			list.add(oldNewUpkeep(oldUpkeep, newUpkeep, "Â§eUpkeep", true));
 		}
 		if(Double.compare(newTime, oldTime) == 0) {
-			list.add("§eTime Modifier: §f"+formatTimeModifier(oldTime)+"%");
+			list.add("Â§eTime Modifier: Â§f"+formatTimeModifier(oldTime)+"%");
 		} else if(newTime > oldTime) {
-			list.add("§eTime Modifier: §c"+formatTimeModifier(oldTime)+"%->"+formatTimeModifier(newTime)+"%");
+			list.add("Â§eTime Modifier: Â§c"+formatTimeModifier(oldTime)+"%->"+formatTimeModifier(newTime)+"%");
 		} else {
-			list.add("§eTime Modifier: §a"+formatTimeModifier(oldTime)+"%->"+formatTimeModifier(newTime)+"%");
+			list.add("Â§eTime Modifier: Â§a"+formatTimeModifier(oldTime)+"%->"+formatTimeModifier(newTime)+"%");
 		}
 		return list;
 	}
 	public String oldNewInteger(Integer old, Integer n, String t, Boolean reverse) {
 		String s = "";
 		if(n == old) {
-			s = t+": §f"+old;
+			s = t+": Â§f"+old;
 		} else if(n > old) {
 			if(reverse) {
-				s = t+": §c"+old+"->"+n;
+				s = t+": Â§c"+old+"->"+n;
 			} else {
-				s = t+": §a"+old+"->"+n;
+				s = t+": Â§a"+old+"->"+n;
 			}
 		} else {
 			if(reverse) {
-				s = t+": §a"+old+"->"+n;
+				s = t+": Â§a"+old+"->"+n;
 			} else {
-				s = t+": §c"+old+"->"+n;
+				s = t+": Â§c"+old+"->"+n;
 			}
 		}
 		return s;
@@ -274,18 +274,18 @@ public class ItemCreator {
 	public String oldNewUpkeep(Double old, Double n, String t, Boolean reverse) {
 		String s = "";
 		if(Double.compare(n, old) == 0) {
-			s = t+": §f"+old;
+			s = t+": Â§f"+old;
 		} else if(n > old) {
 			if(reverse) {
-				s = t+": §c"+old+"d->"+n+"d";
+				s = t+": Â§c"+old+"d->"+n+"d";
 			} else {
-				s = t+": §a"+old+"d->"+n+"d";
+				s = t+": Â§a"+old+"d->"+n+"d";
 			}
 		} else {
 			if(reverse) {
-				s = t+": §a"+old+"d->"+n+"d";
+				s = t+": Â§a"+old+"d->"+n+"d";
 			} else {
-				s = t+": §c"+old+"d->"+n+"d";
+				s = t+": Â§c"+old+"d->"+n+"d";
 			}
 		}
 		return s;
@@ -326,26 +326,26 @@ public class ItemCreator {
 		} else {
 			name = getItemName(item);
 		}
-		return "§f"+name+"§f "+chance+"%";
+		return "Â§f"+name+"Â§f "+chance+"%";
 	}
 	public String getFormattedEffect(String s){
 		String type = s.split("\\(")[0];
 		String effect = s.split("\\(")[1].replace(")", "");
 		if(type.equalsIgnoreCase("time_modifier")) {
 			Double amount = Double.parseDouble(effect);
-			s = "§eTime Modifier: ";
+			s = "Â§eTime Modifier: ";
 			if(amount > 0) {
-				s = s+"§c+"+amount+"%";
+				s = s+"Â§c+"+amount+"%";
 			} else {
-				s = s+"§a"+amount+"%";
+				s = s+"Â§a"+amount+"%";
 			}
 		} else if(type.equalsIgnoreCase("yield")) {
 			Integer amount = Integer.parseInt(effect);
-			s = "§eYield: ";
+			s = "Â§eYield: ";
 			if(amount > 0) {
-				s = s+"§a+"+amount;
+				s = s+"Â§a+"+amount;
 			} else {
-				s = s+"§c"+amount;
+				s = s+"Â§c"+amount;
 			}
 		} else if(type.equalsIgnoreCase("add_drop")) {
 			String item = effect.split("\\,")[0];
@@ -358,35 +358,35 @@ public class ItemCreator {
 			} else {
 				name = getItemName(item);
 			}
-			s = "§eAdded Drop: §f"+name+" §7(Weight: "+amount+")";
+			s = "Â§eAdded Drop: Â§f"+name+" Â§7(Weight: "+amount+")";
 		} else if(type.equalsIgnoreCase("prestige")) {
 			Integer amount = Integer.parseInt(effect);
-			s = "§9Prestige: ";
+			s = "Â§9Prestige: ";
 			if(amount > 0) {
-				s = s+"§f+"+amount;
+				s = s+"Â§f+"+amount;
 			} else {
-				s = s+"§c"+amount;
+				s = s+"Â§c"+amount;
 			}
 		} else if(type.equalsIgnoreCase("extraction")) {
 			Integer amount = Integer.parseInt(effect);
-			s = "§eExtraction: ";
+			s = "Â§eExtraction: ";
 			if(amount > 0) {
-				s = s+"§f+"+amount;
+				s = s+"Â§f+"+amount;
 			} else {
-				s = s+"§c"+amount;
+				s = s+"Â§c"+amount;
 			}
 		} else if(type.equalsIgnoreCase("upkeep")) {
 			Double amount = Double.parseDouble(effect);
 			Formatter format = new Formatter();
 			amount = format.formatDouble(amount);
-			s = "§eUpkeep: "+"§f"+amount+"d";
+			s = "Â§eUpkeep: "+"Â§f"+amount+"d";
 		}
 		return s;
 	}
 	public String getFormattedCost(String s, Integer m){
 		String item = s.split("\\(")[0];
 		Integer amount = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
-		return "§f"+getItemName(item)+"§f x"+(amount*m);
+		return "Â§f"+getItemName(item)+"Â§f x"+(amount*m);
 	}
 	@SuppressWarnings("deprecation")
 	String getItemName(String path) {

@@ -122,7 +122,7 @@ public class NodeManager implements Listener{
 									Inventory i = p.getOpenInventory().getTopInventory();
 									if(i == null) continue;
 									if(p.getOpenInventory() == null) continue;
-									if(p.getOpenInventory().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+ " Node")) {
+									if(p.getOpenInventory().getTitle().equalsIgnoreCase("Â§7"+n.getBlock().getResource()+ " Node")) {
 										inv.updateNodeView(p, n, i);
 									}
 								}
@@ -182,19 +182,19 @@ public class NodeManager implements Listener{
 		if(b == null) return;
 		for(Node node : nodes) {
 			if(node.getLoc().getChunk().equals(e.getBlock().getChunk())) {
-				p.sendMessage("§cChunk already has a node!");
+				p.sendMessage("Â§cChunk already has a node!");
 				e.setCancelled(true);
 				return;
 			}
 		}
 		Faction f = FactionManager.getByMember(p.getName());
 		if(f == null) {
-			p.sendMessage("§cYou need to have a faction to use nodes!");
+			p.sendMessage("Â§cYou need to have a faction to use nodes!");
 			e.setCancelled(true);
 			return;
 		}
 		if(getNodeAmount(f)-getNodeCapacity(f) > 1) {
-			p.sendMessage("§cYou are already 2 nodes over capacity!");
+			p.sendMessage("Â§cYou are already 2 nodes over capacity!");
 			e.setCancelled(true);
 			return;
 		}
@@ -257,7 +257,7 @@ public class NodeManager implements Listener{
 		if(!currentNode.containsKey(p)) return;
 		Node n = currentNode.get(p);
 		InventoryManager inv = new InventoryManager();
-		if(e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+ " Node")) {
+		if(e.getView().getTitle().equalsIgnoreCase("Â§7"+n.getBlock().getResource()+ " Node")) {
 			e.setCancelled(true);
 			if(!n.hasFaction()) {
 				n.breakNode();
@@ -267,20 +267,20 @@ public class NodeManager implements Listener{
 			}
 			Faction f = FactionManager.getByMember(p.getName());
 			if(f == null || !n.getFaction().getId().equalsIgnoreCase(f.getId())) {
-				p.sendMessage("§cCannot change another faction's node");
+				p.sendMessage("Â§cCannot change another faction's node");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 				return;
 			}
 			if(e.getSlot() == 8) {
 				if(n.getIsActive()) {
-					p.sendMessage("§cCannot upgrade while node is active");
+					p.sendMessage("Â§cCannot upgrade while node is active");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
 				}
 				upgradeNode(p, n, e.getClickedInventory());
 			} else if(e.getSlot() == 9) {
 				if(n.getIsActive()) {
-					p.sendMessage("§cCannot change type while node is active");
+					p.sendMessage("Â§cCannot change type while node is active");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
 				}
@@ -290,13 +290,13 @@ public class NodeManager implements Listener{
 				if(f.canPurchaseCapacity()) {
 					purchaseCapacity(p, f, n, e.getClickedInventory());
 				} else if(e.getCurrentItem().getType().equals(Material.NETHER_STAR)) {
-					p.sendMessage("§cAlready purchased the maximum extra capacity");
+					p.sendMessage("Â§cAlready purchased the maximum extra capacity");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
 				}
 			} else if(e.getSlot() == 26) {
 				if(n.getIsActive()) {
-					p.sendMessage("§cCannot downgrade while node is active");
+					p.sendMessage("Â§cCannot downgrade while node is active");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
 				}
@@ -317,7 +317,7 @@ public class NodeManager implements Listener{
 				inv.updateNodeView(p, n, e.getClickedInventory());
 			}  else if(e.getSlot() == 18) {
 				if(n.getIsActive()) {
-					p.sendMessage("§cCannot delete node while active");
+					p.sendMessage("Â§cCannot delete node while active");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
 				}
@@ -328,7 +328,7 @@ public class NodeManager implements Listener{
 				for(NodeSlot slot : n.getCurrentType().getSlots()) {
 					if(slot.getSlot().equals(e.getSlot())) {
 						if(n.getIsActive()) {
-							p.sendMessage("§cCannot change production methods while node is active");
+							p.sendMessage("Â§cCannot change production methods while node is active");
 							p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 							return;
 						}
@@ -338,7 +338,7 @@ public class NodeManager implements Listener{
 					}
 				}
 			}
-		} else if(currentSlot.get(p) != null && e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+" Node: "+WordUtils.capitalize(currentSlot.get(p).getId().replace("_", " ")))) {
+		} else if(currentSlot.get(p) != null && e.getView().getTitle().equalsIgnoreCase("Â§7"+n.getBlock().getResource()+" Node: "+WordUtils.capitalize(currentSlot.get(p).getId().replace("_", " ")))) {
 			e.setCancelled(true);
 			if(!n.hasFaction()) {
 				n.breakNode();
@@ -361,7 +361,7 @@ public class NodeManager implements Listener{
 			if(!pm.getPrerequisite().equalsIgnoreCase("none")){
 				NodeEngine ng = new NodeEngine();
 				if(!ng.checkPrerequisite(pm, n)) {
-					p.sendMessage("§cThis production method requires at least "+WordUtils.capitalize(pm.getPrerequisite().replace("_", " ")));
+					p.sendMessage("Â§cThis production method requires at least "+WordUtils.capitalize(pm.getPrerequisite().replace("_", " ")));
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
 				}
@@ -371,7 +371,7 @@ public class NodeManager implements Listener{
 			n.update();
 			inv.nodeView(p, n);
 			currentNode.put(p, n);
-		} else if(e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+" Node: Type")) {
+		} else if(e.getView().getTitle().equalsIgnoreCase("Â§7"+n.getBlock().getResource()+" Node: Type")) {
 			e.setCancelled(true);
 			if(!n.hasFaction()) {
 				n.breakNode();
@@ -393,9 +393,9 @@ public class NodeManager implements Listener{
 			if(t.getBiomes().size() > 0) {
 				String biome = n.getLoc().getBlock().getBiome().toString();
 				if(!t.getBiomes().contains(biome)) {
-					p.sendMessage("§cThis node type can only be used in these biomes:");
+					p.sendMessage("Â§cThis node type can only be used in these biomes:");
 					for(String s : t.getBiomes()) {
-						p.sendMessage("§f- "+WordUtils.capitalize(s.replace("_", " ")));
+						p.sendMessage("Â§f- "+WordUtils.capitalize(s.replace("_", " ")));
 					}
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 					return;
@@ -404,7 +404,7 @@ public class NodeManager implements Listener{
 			confirm.put(p, ConfirmType.CHANGE_TYPE);
 			currentType.put(p, t);
 			inv.confirmView(p);
-		} else if(e.getView().getTitle().equalsIgnoreCase("§7Confirm Action")) {
+		} else if(e.getView().getTitle().equalsIgnoreCase("Â§7Confirm Action")) {
 			e.setCancelled(true);
 			if(!n.hasFaction()) {
 				n.breakNode();
@@ -426,18 +426,18 @@ public class NodeManager implements Listener{
 	private void purchaseCapacity(Player p, Faction f, Node n, Inventory i) {
 		double cost = n.getNodeCapacityCost();
 		if(f.getBank() == null) {
-			p.sendMessage("§cNo bank");
+			p.sendMessage("Â§cNo bank");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
 		if(f.getBank().getWealth() < cost) {
-			p.sendMessage("§cNot enough funds");
+			p.sendMessage("Â§cNot enough funds");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
 		f.getBank().withdraw(cost);
 		f.setExtraNodeCapacity(f.getExtraNodeCapacity()+1);
-		p.sendMessage("§aPurchased +1 Capacity");
+		p.sendMessage("Â§aPurchased +1 Capacity");
 		p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 		InventoryManager inv = new InventoryManager();
 		inv.updateNodeView(p, n, i);
@@ -445,7 +445,7 @@ public class NodeManager implements Listener{
 	}
 	public void upgradeNode(Player p, Node n, Inventory i) {
 		if(n.getLevel() >= n.getCurrentType().getLevels().size()) {
-			p.sendMessage("§cNode is already at max level");
+			p.sendMessage("Â§cNode is already at max level");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
@@ -453,7 +453,7 @@ public class NodeManager implements Listener{
 		Faction f = n.getFaction();
 		Double cost = newLvl.getCost()*n.getCostIncrease();
 		if(f.getBank() == null || f.getBank().getWealth() < cost) {
-			p.sendMessage("§cFaction bank does not have enough funds");
+			p.sendMessage("Â§cFaction bank does not have enough funds");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
@@ -466,7 +466,7 @@ public class NodeManager implements Listener{
 	}
 	public void downgradeNode(Player p, Node n, Inventory i) {
 		if(n.getLevel() == 1) {
-			p.sendMessage("§cNode cannot go below level 1");
+			p.sendMessage("Â§cNode cannot go below level 1");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}

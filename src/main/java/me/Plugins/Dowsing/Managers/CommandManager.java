@@ -21,7 +21,7 @@ public class CommandManager implements Listener, CommandExecutor{
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(cmd.getName().equalsIgnoreCase(cmd1)) {
 			if(Permissions.isAdmin(sender) == false) {
-				sender.sendMessage("§cYou do not have access to this command!");
+				sender.sendMessage("Â§cYou do not have access to this command!");
 				return false;
 			}
 			if(args[0].equalsIgnoreCase("reload")) {
@@ -39,7 +39,7 @@ public class CommandManager implements Listener, CommandExecutor{
 					String line = args[2]+"."+args[3];
 					try {
 						db.saveResource(id, p.getLocation().getChunk().toString(), line);
-						p.sendMessage("§aResource saved");
+						p.sendMessage("Â§aResource saved");
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -47,7 +47,7 @@ public class CommandManager implements Listener, CommandExecutor{
 				} else if(args[0].equalsIgnoreCase("deleteresource")) {
 					String id = args[1];
 					db.removeResource(id);
-					p.sendMessage("§eResource deleted");
+					p.sendMessage("Â§eResource deleted");
 				}
 			}
 		}
