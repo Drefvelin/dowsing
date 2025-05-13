@@ -23,6 +23,7 @@ import me.Plugins.Dowsing.Objects.ProductionMethod;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemCreator;
 import me.Plugins.SimpleFactions.Objects.Faction;
+import me.Plugins.SimpleFactions.Utils.Permissions;
 import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class InventoryManager {
@@ -46,7 +47,7 @@ public class InventoryManager {
 		i.setItem(15, createGlobe(n));
 		i.setItem(16, createCycle(n));
 		i.setItem(17, createStatus(n));
-		if(n.getBlock().isBreakable()) i.setItem(18, createDeleteButton());
+		if(n.getBlock().isBreakable() || Permissions.isAdmin(player)) i.setItem(18, createDeleteButton());
 		Integer slot = 0;
 		while(slot < i.getSize()) {
 			if(i.getItem(slot) == null) {

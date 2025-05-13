@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,9 +24,14 @@ import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemDropper;
 import me.Plugins.Dowsing.Utils.NodeEngine;
 import me.Plugins.SimpleFactions.Loaders.TierLoader;
+import me.Plugins.SimpleFactions.Loaders.TitleLoader;
+import me.Plugins.SimpleFactions.Managers.TitleManager;
 import me.Plugins.SimpleFactions.Objects.Faction;
 import me.Plugins.SimpleFactions.Objects.Modifier;
+import me.Plugins.SimpleFactions.Tiers.Title;
 import me.Plugins.SimpleFactions.Utils.Formatter;
+import me.Plugins.SimpleFactions.Utils.Permissions;
+import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class Node {
 	UUID id;
@@ -207,7 +213,18 @@ public class Node {
 		return (faction == null && block.isSpecial()) || claimable;
 	}
 
+	public boolean canHold(Faction f){
+		Player p = Bukkit.getPlayerExact(f.getLeader());
+		if(p != null && p.isOnline() && Permissions.isAdmin(p)) return true;
+		if(f.getMembers().size() < Cache.minMembersForNode) return false;
+		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) >= 0) return false;
+		if(f.getTier().getTier() < block.getTier()) return false;
+		if(block.hasTitle() && !TitleManager.titleIsInRealm(f, block.getTitle())) return false;
+		return true;
+	}
+
 	public boolean canClaim(Player p, Faction f){
+		if(Permissions.isAdmin(p)) return true;
 		if(!isClaimable()) return false; //safeguard
 		if(f.getMembers().size() < Cache.minMembersForNode){
 			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to claim this node!");
@@ -219,6 +236,13 @@ public class Node {
 		}
 		if(f.getTier().getTier() < block.getTier()) {
 			p.sendMessage("§cYour faction tier must be at least "+TierLoader.getByLevel(block.getTier()).getName()+" §7(currently "+f.getTier().getName()+"§7) §c to claim this node!");
+			return false;
+		}
+		if(block.hasTitle() && !TitleManager.titleIsInRealm(f, block.getTitle())) {
+			Title t = TitleLoader.getById(block.getTitle());
+			if(t != null){
+				p.sendMessage(StringFormatter.formatHex("§cEither your faction or one of your subjects need to hold the #d9caa7"+t.getName()+ " §7("+t.getTier().getName()+"§7) §ctitle!"));
+			}
 			return false;
 		}
 		return true;
@@ -292,6 +316,19 @@ public class Node {
 		}
 		return 0;
 	}
+
+	public void check() {
+		if(isClaimable()) return;
+		if(faction == null) return;
+		if(canHold(faction)) return;
+		Player p = Bukkit.getPlayer(faction.getLeader());
+		if(p != null && p.isOnline()) {
+			p.sendMessage("§cYou lost control of the "+block.getResource()+" Node §c!");
+		}
+		faction = null;
+		p.closeInventory();
+	}
+
 	public void tick() {
 		if(!isClaimable()) this.timeLeft = this.timeLeft-1;
 	}

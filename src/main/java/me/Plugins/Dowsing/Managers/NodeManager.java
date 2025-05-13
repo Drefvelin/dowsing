@@ -45,6 +45,7 @@ import me.Plugins.Dowsing.enums.ConfirmType;
 import me.Plugins.SimpleFactions.Events.FactionDeleteEvent;
 import me.Plugins.SimpleFactions.Managers.FactionManager;
 import me.Plugins.SimpleFactions.Objects.Faction;
+import me.Plugins.SimpleFactions.Utils.Permissions;
 
 public class NodeManager implements Listener{
 	public static List<Node> nodes = new ArrayList<Node>();
@@ -57,6 +58,7 @@ public class NodeManager implements Listener{
 		Integer i = 0;
 		for(Node n : nodes) {
 			if(!n.hasFaction()) continue;
+			if(n.getBlock().isSpecial()) continue;
 			if(n.getFaction().getId().equalsIgnoreCase(f.getId())) i++;
 		}
 		return i;
@@ -143,6 +145,8 @@ public class NodeManager implements Listener{
 					if(n.isClaimable()){
 						Location loc = n.getLoc().clone().add(0.5, 1, 0.5);
 						loc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, loc, 10);
+					} else {
+						n.check();
 					}
 				}	
 			}
@@ -209,12 +213,12 @@ public class NodeManager implements Listener{
 			e.setCancelled(true);
 			return;
 		}
-		if(f.getMembers().size() < Cache.minMembersForNode){
+		if(f.getMembers().size() < Cache.minMembersForNode && !b.isSpecial()){
 			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to have a node!");
 			e.setCancelled(true);
 			return;
 		}
-		if(getNodeAmount(f)-getNodeCapacity(f) >= 0) {
+		if(getNodeAmount(f)-getNodeCapacity(f) >= 0 && !b.isSpecial()) {
 			p.sendMessage("§cYou are already filled your node capacity!");
 			e.setCancelled(true);
 			return;
@@ -353,7 +357,7 @@ public class NodeManager implements Listener{
 				n.update();
 				inv.updateNodeView(p, n, e.getClickedInventory());
 			} else if(e.getSlot() == 18) {
-				if(!n.getBlock().isBreakable()) return;
+				if(!(n.getBlock().isBreakable() || Permissions.isAdmin(p))) return;
 				if(n.getIsActive()) {
 					p.sendMessage("§cCannot delete node while active");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);

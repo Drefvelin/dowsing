@@ -16,6 +16,7 @@ public class NodeBlock {
 	private boolean breakable = true;
 	private boolean transferable = true;
 	private boolean special = false;
+	private String title;
 
 	private int tier;
 
@@ -55,6 +56,12 @@ public class NodeBlock {
 	public int getTier(){
 		return tier;
 	}
+	public boolean hasTitle() {
+		return title != null;
+	}
+	public String getTitle() {
+		return title;
+	}
 	public NodeBlock(String key, ConfigurationSection config) {
 		this.id = key;
 		this.block = config.getString("block");
@@ -68,6 +75,7 @@ public class NodeBlock {
 		transferable = config.getBoolean("transferable", true);
 		special = config.getBoolean("special", false);
 		tier = config.getInt("tier", 0);
+		title = config.getString("title", null);
 	}
 	public NodeBlock(NodeBlock another) {
 		this.id = another.id;
@@ -80,5 +88,6 @@ public class NodeBlock {
 		this.transferable = another.isTransferable();
 		this.special = another.isSpecial();
 		this.tier = another.getTier();
+		if(another.hasTitle()) this.title = another.getTitle();
 	}
 }
