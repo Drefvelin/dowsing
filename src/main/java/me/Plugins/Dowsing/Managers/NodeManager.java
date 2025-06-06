@@ -284,6 +284,7 @@ public class NodeManager implements Listener{
 			return;
 		}
 		if(!n.hasFaction()) {
+			p.sendMessage("§cNode had no faction and so it broke");
 			n.breakNode();
 			nodes.remove(n);
 			return;

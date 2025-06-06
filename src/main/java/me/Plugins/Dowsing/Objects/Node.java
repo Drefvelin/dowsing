@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 
 import dev.lone.itemsadder.api.CustomFurniture;
 import me.Plugins.Dowsing.Cache;
-import me.Plugins.Dowsing.DowsingMain;
 import me.Plugins.Dowsing.Managers.NodeManager;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemDropper;
@@ -58,8 +57,6 @@ public class Node {
 	Integer inputCounter;
 	Integer extraction;
 	Double upkeep;
-
-	private boolean claimable = false;
 
 	public Double getUpkeep() {
 		return upkeep;
@@ -210,14 +207,14 @@ public class Node {
 		this.costIncrease = costIncrease;
 	}
 	public boolean isClaimable() {
-		return (faction == null && block.isSpecial()) || claimable;
+		return faction == null;
 	}
 
 	public boolean canHold(Faction f){
 		Player p = Bukkit.getPlayerExact(f.getLeader());
 		if(p != null && p.isOnline() && Permissions.isAdmin(p)) return true;
 		if(f.getMembers().size() < Cache.minMembersForNode) return false;
-		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) >= 0) return false;
+		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) > 0) return false;
 		if(f.getTier().getTier() < block.getTier()) return false;
 		if(block.hasTitle() && !TitleManager.titleIsInRealm(f, block.getTitle())) return false;
 		return true;
@@ -252,8 +249,9 @@ public class Node {
 		this.id = UUID.randomUUID();
 		this.block = b;
 		this.loc = l;
-		if(!b.isSpecial()){
-			this.faction = f;
+		this.faction = f;
+		if(b.isSpecial()){
+			this.faction = null;
 		}
 		this.isActive = false;
 		this.level = 1;
