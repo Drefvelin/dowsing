@@ -322,9 +322,9 @@ public class Node {
 		Player p = Bukkit.getPlayer(faction.getLeader());
 		if(p != null && p.isOnline()) {
 			p.sendMessage("§cYou lost control of the "+block.getResource()+" Node §c!");
+			p.closeInventory();
 		}
 		faction = null;
-		p.closeInventory();
 	}
 
 	public void tick() {
