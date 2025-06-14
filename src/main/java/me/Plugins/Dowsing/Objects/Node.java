@@ -30,6 +30,7 @@ import me.Plugins.SimpleFactions.Objects.Modifier;
 import me.Plugins.SimpleFactions.Tiers.Title;
 import me.Plugins.SimpleFactions.Utils.Formatter;
 import me.Plugins.SimpleFactions.Utils.Permissions;
+import me.Plugins.SimpleFactions.enums.FactionModifiers;
 import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class Node {
@@ -519,6 +520,7 @@ public class Node {
 				e = e-extractionY;
 			}
 		}
+		if(faction != null) this.timeModifier -= faction.getModifier(FactionModifiers.NODE_SPEED).getAmount();
 		if(this.timeModifier < -99) {
 			modifiedTime = 1;
 		} else {
