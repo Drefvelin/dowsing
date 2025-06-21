@@ -228,7 +228,7 @@ public class Node {
 			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to claim this node!");
 			return false;
 		}
-		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) >= 0) {
+		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) >= 0 && !block.isSpecial()) {
 			p.sendMessage("§cYou are already filled your node capacity!");
 			return false;
 		}
