@@ -375,12 +375,6 @@ public class Node {
 			this.errors.add("§7No hopper");
 			this.errors.add("§7Lacking resources");
 		}
-		if(ng.hasBarrel(this)) {
-			if(!ng.hasInputs(this)) {
-				failed = true;
-				this.errors.add("§7Lacking resources");
-			}
-		}
 		if(failed) {
 			if(this.isActive) {
 				this.deActivate();
