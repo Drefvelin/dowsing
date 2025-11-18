@@ -43,5 +43,10 @@ public class ConfigLoader {
 			Cache.refundPercentage = 0.8;
 		}
 		Cache.minMembersForNode = config.getInt("min-members-for-node", 1);
+
+		Cache.efficiencyGrowthPerMember = config.getDouble("efficiency-growth-per-member", 0.1);
+		Cache.maxEfficiencyPerMember = config.getDouble("max-efficiency-per-member", 25.0);
+		Cache.efficiencyLossType = config.getDouble("efficiency-loss-type", 40.0);
+		Cache.efficiencyLossPM = config.getDouble("efficiency-loss-pm", 5.0);
 	}
 }

@@ -130,6 +130,7 @@ public class Database {
     				int timeLeft = (int) Math.round((Double) json.get("time remaining"));
     				int inputCounter = (int) Math.round((Double) json.get("input counter"));
     				NodeType currentType = TypeLoader.getByString((String) json.get("current type"));
+					double efficiency = json.containsKey("efficiency") ? (Double) json.get("efficiency") : 50;
     				if(currentType == null) continue;
     				List<String> activePMs = new ArrayList<String>();
     				int i = 0;
@@ -139,7 +140,7 @@ public class Database {
     					i++;
     				}
     				setSlots(currentType, activePMs);
-    				Node n = new Node(id, b, loc, f, isActive, level, cycleTime, currentType, timeLeft, inputCounter);
+    				Node n = new Node(id, b, loc, f, isActive, level, cycleTime, currentType, timeLeft, inputCounter, efficiency);
     				NodeManager.nodes.add(n);
     			} catch (Exception ex) {
     				ex.printStackTrace();
@@ -202,6 +203,7 @@ public class Database {
         		i++;
         	}
         	defaults.put("active pms", pmArray);
+			defaults.put("efficiency", n.getEfficiency());
         	save(file, defaults);
         } catch (Throwable ex) {
 			ex.printStackTrace();

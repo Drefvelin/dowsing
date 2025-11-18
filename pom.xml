@@ -6,7 +6,7 @@
 
     <groupId>me.plugins</groupId>
     <artifactId>dowsing</artifactId>
-    <version>3.0.6</version>
+    <version>3.1.2</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -62,13 +62,6 @@
             <version>3.5.0</version>
             <scope>system</scope>
             <systemPath>D:/Dokumenter/My Plugins/Reference Libs/ItemsAdder_3.5.0-r2.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>local</groupId>
-            <artifactId>ItemsAdder</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>D:/Dokumenter/My Plugins/Reference Libs/LoneLibs.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>local</groupId>

@@ -4,7 +4,7 @@ name: Dowsing
 version: 3.0.3
 author: Drefvelin
 
-depend: [MMOItems, MythicLib, ItemsAdder, LoneLibs, SimpleFactions]
+depend: [MMOItems, MythicLib, ItemsAdder, SimpleFactions]
 
 commands:
   dowsing:

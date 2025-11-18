@@ -30,7 +30,7 @@ public class InventoryManager {
 	ItemCreator ic = new ItemCreator();
 	public void nodeView(Player player, Node n) {
 		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "§7"+n.getBlock().getResource()+" Node");
-		i.setItem(9, createMainItem(n, n.getCurrentType()));
+		i.setItem(9, createMainItem(n, n.getCurrentType(), false));
 		for(NodeSlot ns : n.getCurrentType().getSlots()) {
 			ns.getActivePm().setMenuItem(ic.updateMenuItem(n, ns.getActivePm()));
 			i.setItem(ns.getSlot(), ns.getActivePm().getMenuItem());
@@ -98,7 +98,7 @@ public class InventoryManager {
 		Inventory i = DowsingMain.plugin.getServer().createInventory(null, 27, "§7"+n.getBlock().getResource()+" Node: Type");
 		for(int y = 0; y<n.getBlock().getTypes().size(); y++) {
 			NodeType t = n.getBlock().getTypes().get(y);
-			ItemStack item = createMainItem(n, t);
+			ItemStack item = createMainItem(n, t, true);
 			if(Cache.naturalYieldEnabled) {
 				Database db = new Database();
 				try {
@@ -146,7 +146,7 @@ public class InventoryManager {
 			ItemMeta m = item.getItemMeta();
 			List<String> lore = m.getLore();
 			lore.add(" ");
-			lore.add("§4Warning! §cChanging type will reset the node to level 1!");
+			//lore.add("§4Warning! §cChanging type will reset the node to level 1!");
 			m.setLore(lore);
 			item.setItemMeta(m);
 			i.setItem(y, item);
@@ -184,7 +184,7 @@ public class InventoryManager {
 	}
 	public void updateNodeView(Player p, Node n, Inventory i) {
 		if(i.getSize() < 27) return;
-		i.setItem(9, createMainItem(n, n.getCurrentType()));
+		i.setItem(9, createMainItem(n, n.getCurrentType(), false));
 		for(NodeSlot ns : n.getCurrentType().getSlots()) {
 			ns.getActivePm().setMenuItem(ic.updateMenuItem(n, ns.getActivePm()));
 			i.setItem(ns.getSlot(), ns.getActivePm().getMenuItem());
@@ -222,8 +222,8 @@ public class InventoryManager {
 		i.setItemMeta(meta);
 		return i;
 	}
-	public ItemStack createMainItem(Node n, NodeType t) {
-		ItemStack i = ic.createTypeItemNode(n, t);
+	public ItemStack createMainItem(Node n, NodeType t, boolean gui) {
+		ItemStack i = ic.createTypeItemNode(n, t, gui);
 		return i;
 	}
 	ItemStack createTransferItem() {
@@ -310,6 +310,23 @@ public class InventoryManager {
 		i.setItemMeta(m);
 		return i;
 	}
+	private String getEfficiencyString(double efficiency) {
+		String color;
+
+		if (efficiency < 20) {
+			color = "§4"; // dark red
+		} else if (efficiency < 40) {
+			color = "§c"; // red
+		} else if (efficiency < 60) {
+			color = "§e"; // yellow
+		} else if (efficiency < 80) {
+			color = "§a"; // light green
+		} else {
+			color = "§2"; // dark green
+		}
+
+		return String.format("§7Efficiency: %s%.2f%%", color, efficiency);
+	}
 	ItemStack createStatus(Node n) {
 		ItemStack i = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
 		if(!n.getIsActive()) {
@@ -326,6 +343,8 @@ public class InventoryManager {
 			List<String> lore = new ArrayList<String>();
 			lore.add("§7Time until next output: §f"+ic.formatTime(n.getTimeLeft()));
 			lore.add("§7Time until next input: §f"+ic.formatTime(Cache.cycleLength-n.getCycleTime()));
+			lore.add("");
+			lore.add(getEfficiencyString(n.getEfficiency()));
 			lore.add(" ");
 			lore.add("§eClick to Deactivate");
 			lore.add(" ");

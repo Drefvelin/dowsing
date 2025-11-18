@@ -95,6 +95,7 @@ public class NodeManager implements Listener{
 }
 	public void start() {
 		particleCycle();
+		hourCycle();
 		new BukkitRunnable()
 		{
 			public void run()
@@ -152,6 +153,17 @@ public class NodeManager implements Listener{
 			}
 		}.runTaskTimer(DowsingMain.plugin, 0L, 5L);
 	}
+	public void hourCycle(){
+		new BukkitRunnable()
+		{
+			public void run()
+			{
+				for(Node n : nodes){
+					n.growEfficiency();
+				}	
+			}
+		}.runTaskTimer(DowsingMain.plugin, 0L, 72000L);
+	}
 	public void validate() {
 		for(int i = 0; i<nodes.size();i++) {
 			Node n = nodes.get(i);
@@ -176,7 +188,8 @@ public class NodeManager implements Listener{
 		if(t.equals(ConfirmType.CHANGE_TYPE)) {
 			NodeType nt = currentType.get(p);
 			n.setCurrentType(nt);
-			n.setLevel(1);
+			//n.setLevel(1);
+			n.updateEfficiency(-Cache.efficiencyLossType);
 			n.update();
 			InventoryManager inv = new InventoryManager();
 			inv.nodeView(p, n);
@@ -308,7 +321,7 @@ public class NodeManager implements Listener{
 				return;
 			}
 			Faction f = FactionManager.getByMember(p.getName());
-			if(f == null || !n.getFaction().getId().equalsIgnoreCase(f.getId())) {
+			if(!p.hasPermission("dowsing.admin") && (f == null || !n.getFaction().getId().equalsIgnoreCase(f.getId()))) {
 				p.sendMessage("§cCannot change another faction's node");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 				return;
@@ -417,6 +430,7 @@ public class NodeManager implements Listener{
 			}
 			p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 			slot.setActivePm(pm);
+			n.updateEfficiency(-Cache.efficiencyLossPM);
 			n.update();
 			inv.nodeView(p, n);
 			currentNode.put(p, n);

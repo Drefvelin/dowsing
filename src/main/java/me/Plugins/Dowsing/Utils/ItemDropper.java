@@ -15,8 +15,10 @@ public class ItemDropper {
 		for(String key : n.getCompleteDrop().keySet()) {
 			maxWeight = maxWeight+n.getCompleteDrop().get(key);
 		}
+		int safety = 0;
 		Integer dropped = 0;
-		while(dropped < n.getYield()) {
+		while(dropped < n.getYield() && safety < n.getYield() * 10) {
+			safety++;
 			Double random = Math.random();
 			Double previous = 0.0;
 			for(String key : n.getCompleteDrop().keySet()) {

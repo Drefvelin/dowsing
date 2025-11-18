@@ -59,6 +59,9 @@ public class Node {
 	Integer extraction;
 	Double upkeep;
 
+	//Production Efficiency
+	double efficiency = 0;
+
 	public Double getUpkeep() {
 		return upkeep;
 	}
@@ -211,6 +214,11 @@ public class Node {
 		return faction == null;
 	}
 
+	//Efficiency
+	public double getEfficiency() {
+		return efficiency;
+	}
+
 	public boolean canHold(Faction f){
 		Player p = Bukkit.getPlayerExact(f.getLeader());
 		if(p != null && p.isOnline() && Permissions.isAdmin(p)) return true;
@@ -254,6 +262,7 @@ public class Node {
 		if(b.isSpecial()){
 			this.faction = null;
 		}
+		this.efficiency = 50;
 		this.isActive = false;
 		this.level = 1;
 		this.yield = 0;
@@ -276,7 +285,7 @@ public class Node {
 		if(!isClaimable()) update();
 		
 	}
-	public Node(UUID id, NodeBlock b, Location l, Faction f, Boolean active, int lvl, int cycleTime, NodeType currentType, int timeLeft, int inputCounter) {
+	public Node(UUID id, NodeBlock b, Location l, Faction f, Boolean active, int lvl, int cycleTime, NodeType currentType, int timeLeft, int inputCounter, double efficiency) {
 		this.id = id;
 		this.block = b;
 		this.loc = l;
@@ -285,6 +294,7 @@ public class Node {
 		} else {
 			this.faction = null;
 		}
+		this.efficiency = efficiency;
 		this.isActive = active;
 		this.level = lvl;
 		this.yield = 0;
@@ -449,6 +459,35 @@ public class Node {
 			}
 		}
 	}
+
+	public void growEfficiency() {
+		if(faction == null) return;
+		int members = faction.getMembers().size();
+		double growth = Math.min(1.0, members*Cache.efficiencyGrowthPerMember);
+		updateEfficiency(growth);
+	}
+
+	public double getMaxEfficiency() {
+		if(faction == null) return 0;
+		return Math.min(100.0, faction.getMembers().size()*Cache.maxEfficiencyPerMember);
+	}
+
+	public void updateEfficiency(double eff) {
+		efficiency += eff;
+		if(efficiency < 0) efficiency = 0;
+		if(efficiency > getMaxEfficiency()) efficiency = getMaxEfficiency();
+	}
+
+	public void updateEfficiencyTime() {
+		int old = modifiedTime;
+
+		// Scale goes from 4x (eff=0) down to 1x (eff=100)
+		double scale = 4.0 - (efficiency / 100.0) * 3.0;
+
+		modifiedTime = (int) Math.round(modifiedTime * scale);
+	}
+
+
 	public void update() {
 		if(isClaimable()) return;
 		this.yield = 0;
@@ -520,6 +559,8 @@ public class Node {
 		} else {
 			modifiedTime = (int) Math.round(this.getCurrentType().getTimer()*(1+(this.timeModifier/100)));
 		}
+		updateEfficiencyTime();
+		if(timeLeft > modifiedTime) timeLeft = modifiedTime;
 		setCompleteDrops();
 		int newMultipler = 1+NodeManager.getNodeAmount(this.faction)-getCapacity();
 		if(newMultipler < 1) {

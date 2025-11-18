@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import dev.lone.itemsadder.api.CustomStack;
+import me.Plugins.Dowsing.Cache;
 import me.Plugins.Dowsing.Objects.Level;
 import me.Plugins.Dowsing.Objects.Node;
 import me.Plugins.Dowsing.Objects.NodeType;
@@ -86,6 +87,10 @@ public class ItemCreator {
 		if(!prerequisite.equalsIgnoreCase("none")) {
 			lore.add("§7Requires at least: §f"+WordUtils.capitalize(new String(prerequisite).replace("_", "")));
 		}
+		if(Cache.efficiencyLossPM > 0) {
+			lore.add("");
+			lore.add("§cEfficiency: §4-"+Cache.efficiencyLossPM+"%");
+		}
 		m.setLore(lore);
 		i.setItemMeta(m);
 		return i;
@@ -144,7 +149,7 @@ public class ItemCreator {
 		i.setItemMeta(m);
 		return i;
 	}
-	public ItemStack createTypeItemNode(Node n, NodeType t) {
+	public ItemStack createTypeItemNode(Node n, NodeType t, boolean gui) {
 		ItemStack i = t.getMenuItem();
 		List<String> lore = new ArrayList<String>();
 		ItemMeta m = i.getItemMeta();
@@ -165,6 +170,10 @@ public class ItemCreator {
 		}
 		for(String s : n.getCompleteDrop().keySet()) {
 			lore.add("§f"+getFormattedDrop(s, n.getCompleteDrop().get(s), maxWeight));
+		}
+		if(gui & Cache.efficiencyLossType > 0) {
+			lore.add("");
+			lore.add("§cEfficiency: §4-"+Cache.efficiencyLossType+"%");
 		}
 		m.setLore(lore);
 		i.setItemMeta(m);

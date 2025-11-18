@@ -13,4 +13,10 @@ public class Cache {
 	public static int maxMemberCapacity;
 
 	public static int minMembersForNode;
+
+	public static double maxEfficiencyPerMember;
+	public static double efficiencyGrowthPerMember;
+
+	public static double efficiencyLossType;
+	public static double efficiencyLossPM;
 }
