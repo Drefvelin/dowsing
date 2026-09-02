@@ -22,7 +22,7 @@ import me.Plugins.Dowsing.Objects.NodeType;
 import me.Plugins.Dowsing.Objects.ProductionMethod;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemCreator;
-import me.Plugins.SimpleFactions.Objects.Faction;
+import me.Plugins.SimpleFactions.Guild.Guild;
 import me.Plugins.SimpleFactions.Utils.Permissions;
 import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
@@ -41,7 +41,7 @@ public class InventoryManager {
 		if(n.getBlock().isTransferable()) i.setItem(6, createTransferItem());
 		i.setItem(8, createUpgrade(n));
 		i.setItem(26, createDowngrade(n));
-		if(n.getFaction().canPurchaseCapacity()) {
+		if(NodeManager.canPurchaseCapacity(n.getGuild())) {
 			i.setItem(24, createCapacityButton(n));
 		}
 		i.setItem(15, createGlobe(n));
@@ -197,7 +197,7 @@ public class InventoryManager {
 		i.setItem(8, createUpgrade(n));
 		i.setItem(26, createDowngrade(n));
 		i.setItem(15, createGlobe(n));
-		if(n.getFaction().canPurchaseCapacity()) {
+		if(NodeManager.canPurchaseCapacity(n.getGuild())) {
 			i.setItem(24, createCapacityButton(n));
 		}
 		i.setItem(16, createCycle(n));
@@ -232,7 +232,7 @@ public class InventoryManager {
 		m.setDisplayName(StringFormatter.formatHex("#4da866Transfer Node"));
 		List<String> lore = new ArrayList<String>();
 		lore.add("§7Click to mark the node as §eClaimable");
-		lore.add("§7Any faction leader that interacts with");
+		lore.add("§7Any guild leader that interacts with");
 		lore.add("§7this node will claim it.");
 		m.setLore(lore);
 		i.setItemMeta(m);
@@ -240,18 +240,18 @@ public class InventoryManager {
 	}
 
 	ItemStack createGlobe(Node n) {
-		Faction f = n.getFaction();
+		Guild g = n.getGuild();
 		ItemStack i = getItemsAdderItem("mcicons:icon_web");
 		ItemMeta m = i.getItemMeta();
-		m.setDisplayName("§eBelongs to: "+f.getName());
+		m.setDisplayName("§eBelongs to: "+g.getName());
 		List<String> lore = new ArrayList<String>();
-		lore.add("§7"+f.getRulerTitle()+": §f"+f.getLeader());
-		if(NodeManager.getNodeAmount(f) < n.getCapacity()) {
-			lore.add("§eNodes: §a"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
-		} else if(NodeManager.getNodeAmount(f) == n.getCapacity()){
-			lore.add("§eNodes: §e"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
+		lore.add("§7Leader: §f"+g.getLeader());
+		if(NodeManager.getNodeAmount(g) < n.getCapacity()) {
+			lore.add("§eNodes: §a"+NodeManager.getNodeAmount(g)+"/"+n.getCapacity());
+		} else if(NodeManager.getNodeAmount(g) == n.getCapacity()){
+			lore.add("§eNodes: §e"+NodeManager.getNodeAmount(g)+"/"+n.getCapacity());
 		} else {
-			lore.add("§eNodes: §c"+NodeManager.getNodeAmount(f)+"/"+n.getCapacity());
+			lore.add("§eNodes: §c"+NodeManager.getNodeAmount(g)+"/"+n.getCapacity());
 		}
 		lore.add("§eCost Multiplier: §a"+n.getMultiplier());
 		if(n.getCostIncrease() > 1.0) {

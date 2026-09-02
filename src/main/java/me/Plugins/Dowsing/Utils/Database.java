@@ -35,6 +35,7 @@ import me.Plugins.Dowsing.Objects.Node;
 import me.Plugins.Dowsing.Objects.NodeBlock;
 import me.Plugins.Dowsing.Objects.NodeSlot;
 import me.Plugins.Dowsing.Objects.NodeType;
+import me.Plugins.SimpleFactions.Guild.Guild;
 import me.Plugins.SimpleFactions.Managers.FactionManager;
 import me.Plugins.SimpleFactions.Objects.Faction;
 
@@ -120,10 +121,7 @@ public class Database {
     				UUID id = UUID.fromString((String) json.get("id"));
     				NodeBlock b = BlockLoader.getByString((String) json.get("block"));
     				if(b == null) continue;
-    				Faction f = null;
-    				if(!((String) json.get("faction")).equalsIgnoreCase("none")) {
-    					f = FactionManager.getByString((String) json.get("faction"));
-    				}
+    				Guild g = resolveOwner(json);
     				Boolean isActive = Boolean.parseBoolean((String) json.get("active"));
     				int level = (int) Math.round((Double) json.get("level"));
     				int cycleTime = (int) Math.round((Double) json.get("cycle time"));
@@ -140,7 +138,7 @@ public class Database {
     					i++;
     				}
     				setSlots(currentType, activePMs);
-    				Node n = new Node(id, b, loc, f, isActive, level, cycleTime, currentType, timeLeft, inputCounter, efficiency);
+    				Node n = new Node(id, b, loc, g, isActive, level, cycleTime, currentType, timeLeft, inputCounter, efficiency);
     				NodeManager.nodes.add(n);
     			} catch (Exception ex) {
     				ex.printStackTrace();
@@ -159,6 +157,64 @@ public class Database {
 			}
 		}
 	}
+
+	Guild resolveOwner(JSONObject json) {
+		if(json.containsKey("guild")) {
+			String gid = String.valueOf(json.get("guild"));
+			if(!gid.equalsIgnoreCase("none")) {
+				return FactionManager.getGuildByString(gid);
+			}
+			return null;
+		}
+		if(json.containsKey("faction")) {
+			String fid = String.valueOf(json.get("faction"));
+			if(!fid.equalsIgnoreCase("none")) {
+				Faction f = FactionManager.getByString(fid);
+				if(f != null) {
+					return f.getOrCreateMainGuild();
+				}
+			}
+		}
+		return null;
+	}
+
+	public void loadGuildCapacity() {
+		File file = new File("plugins/Dowsing/guild_capacity.json");
+		if(!file.exists()) {
+			return;
+		}
+		try {
+			JSONObject data = (JSONObject) parser.parse(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+			for(Object key : data.keySet()) {
+				Object value = data.get(key);
+				int extra = 0;
+				if(value instanceof Number) {
+					extra = ((Number) value).intValue();
+				} else if(value != null) {
+					extra = Integer.parseInt(value.toString());
+				}
+				NodeManager.extraCapacityByGuild.put(key.toString(), extra);
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void saveGuildCapacity() {
+		try {
+			File file = new File("plugins/Dowsing/guild_capacity.json");
+			file.createNewFile();
+			HashMap<String, Object> defaults = new HashMap<String, Object>();
+			for(String key : NodeManager.extraCapacityByGuild.keySet()) {
+				defaults.put(key, NodeManager.extraCapacityByGuild.get(key));
+			}
+			json = new JSONObject();
+			save(file, defaults);
+		} catch (Throwable ex) {
+			ex.printStackTrace();
+		}
+	}
+
 	public void deleteDatabase() {
     	File folder = new File("plugins/Dowsing/Nodes");
     	for (final File file : folder.listFiles()) {
@@ -185,10 +241,10 @@ public class Database {
         	defaults.put("yPos", n.getLoc().getY());
         	defaults.put("zPos", n.getLoc().getZ());
         	defaults.put("block", n.getBlock().getId());
-        	if(n.hasFaction()) {
-        		defaults.put("faction", n.getFaction().getId());
+        	if(n.hasGuild()) {
+        		defaults.put("guild", n.getGuild().getId());
         	} else {
-        		defaults.put("faction", "none");
+        		defaults.put("guild", "none");
         	}
         	defaults.put("active", n.getIsActive().toString());
         	defaults.put("level", n.getLevel());

@@ -42,9 +42,8 @@ import me.Plugins.Dowsing.Utils.ItemDropper;
 import me.Plugins.Dowsing.Utils.NodeEngine;
 import me.Plugins.Dowsing.Utils.NodeReloader;
 import me.Plugins.Dowsing.enums.ConfirmType;
-import me.Plugins.SimpleFactions.Events.FactionDeleteEvent;
+import me.Plugins.SimpleFactions.Guild.Guild;
 import me.Plugins.SimpleFactions.Managers.FactionManager;
-import me.Plugins.SimpleFactions.Objects.Faction;
 import me.Plugins.SimpleFactions.Utils.Permissions;
 
 public class NodeManager implements Listener{
@@ -54,24 +53,38 @@ public class NodeManager implements Listener{
 	public HashMap<Player, NodeType> currentType = new HashMap<>();
 	public HashMap<Player, ConfirmType> confirm = new HashMap<>();
 	public HashMap<Location, NodeReloader> cached = new HashMap<>();
-	public static Integer getNodeAmount(Faction f) {
+	public static HashMap<String, Integer> extraCapacityByGuild = new HashMap<>();
+
+	public static int getExtraCapacity(Guild g) {
+		if(g == null) return 0;
+		return extraCapacityByGuild.getOrDefault(g.getId(), 0);
+	}
+
+	public static boolean canPurchaseCapacity(Guild g) {
+		if(g == null) return false;
+		return getExtraCapacity(g) < me.Plugins.SimpleFactions.Cache.maxExtraNodeCapacity;
+	}
+
+	public static Integer getNodeAmount(Guild g) {
 		Integer i = 0;
+		if(g == null) return i;
 		for(Node n : nodes) {
-			if(!n.hasFaction()) continue;
+			if(!n.hasGuild()) continue;
 			if(n.getBlock().isSpecial()) continue;
-			if(n.getFaction().getId().equalsIgnoreCase(f.getId())) i++;
+			if(n.getGuild().getId().equalsIgnoreCase(g.getId())) i++;
 		}
 		return i;
 	}
-	public static Integer getNodeCapacity(Faction f) {
+	public static Integer getNodeCapacity(Guild g) {
 		int capacity = 1;
+		if(g == null) return capacity;
 		if(Cache.extraCapacity) {
-			int members = f.getMembers().size();
+			int members = g.getMembers().size();
 			int added = (int) Math.floorDiv(members, Cache.membersPerCapacity);
 			if(added > Cache.maxMemberCapacity) {
 				added = Cache.maxMemberCapacity;
 			}
-			capacity = capacity+added+f.getExtraNodeCapacity();
+			capacity = capacity+added+getExtraCapacity(g);
 		}
 		return capacity;
 	}
@@ -103,7 +116,7 @@ public class NodeManager implements Listener{
 					validate();
 					for(Node n : nodes) {
 						if(!n.getIsActive()) continue;
-						if(!n.hasFaction()) continue;
+						if(!n.hasGuild()) continue;
 						if(n.getLoc().getChunk().isForceLoaded() == false) {
 							n.getLoc().getChunk().setForceLoaded(true);
 						}
@@ -220,23 +233,23 @@ public class NodeManager implements Listener{
 				return;
 			}
 		}
-		Faction f = FactionManager.getByMember(p.getName());
-		if(f == null) {
-			p.sendMessage("§cYou need to have a faction to use nodes!");
+		Guild g = FactionManager.getGuildByMember(p.getName());
+		if(g == null) {
+			p.sendMessage("§cYou need to have a guild to use nodes!");
 			e.setCancelled(true);
 			return;
 		}
-		if(f.getMembers().size() < Cache.minMembersForNode && !b.isSpecial()){
-			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to have a node!");
+		if(g.getMembers().size() < Cache.minMembersForNode && !b.isSpecial()){
+			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your guild to have a node!");
 			e.setCancelled(true);
 			return;
 		}
-		if(getNodeAmount(f)-getNodeCapacity(f) >= 0 && !b.isSpecial()) {
+		if(getNodeAmount(g)-getNodeCapacity(g) >= 0 && !b.isSpecial()) {
 			p.sendMessage("§cYou are already filled your node capacity!");
 			e.setCancelled(true);
 			return;
 		}
-		Node n = new Node(e.getBlock().getLocation(), f, b);
+		Node n = new Node(e.getBlock().getLocation(), g, b);
 		p.sendMessage("Node created");
 		p.getLocation().getWorld().playSound(n.getLoc(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 		nodes.add(n);
@@ -264,15 +277,6 @@ public class NodeManager implements Listener{
 		}
 	}
 	@EventHandler
-	public void deleteFaction(FactionDeleteEvent e) {
-		for(int i = 0; i<nodes.size(); i++) {
-			Node n = nodes.get(i);
-			if(n.getFaction().getId().equalsIgnoreCase(e.getFaction().getId())) {
-				n.setFaction(null);;
-			}
-		}
-	}
-	@EventHandler
 	public void openNode(PlayerInteractEvent e) {
 		if(!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		Player p = e.getPlayer();
@@ -281,23 +285,23 @@ public class NodeManager implements Listener{
 		InventoryManager inv = new InventoryManager();
 		e.setCancelled(true);
 		if(n.isClaimable()){
-			Faction f = FactionManager.getByLeader(p.getName());
-			if(f == null) {
-				p.sendMessage("§cMust be a faction leader to claim an unclaimed node!");
+			Guild g = FactionManager.getGuildByLeader(p.getName());
+			if(g == null) {
+				p.sendMessage("§cMust be a guild leader to claim an unclaimed node!");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 				return;
 			}
-			if(!n.canClaim(p, f)) return;
+			if(!n.canClaim(p, g)) return;
 			p.sendMessage("§aClaimed Node");
-			n.setFaction(FactionManager.getByLeader(p.getName()));
+			n.setGuild(g);
 			p.getLocation().getWorld().playSound(n.getLoc(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 			n.update();
 			inv.nodeView(p, n);
 			currentNode.put(p, n);
 			return;
 		}
-		if(!n.hasFaction()) {
-			p.sendMessage("§cNode had no faction and so it broke");
+		if(!n.hasGuild()) {
+			p.sendMessage("§cNode had no guild and so it broke");
 			n.breakNode();
 			nodes.remove(n);
 			return;
@@ -314,15 +318,15 @@ public class NodeManager implements Listener{
 		InventoryManager inv = new InventoryManager();
 		if(e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+ " Node")) {
 			e.setCancelled(true);
-			if(!n.hasFaction()) {
+			if(!n.hasGuild()) {
 				n.breakNode();
 				nodes.remove(n);
 				p.closeInventory();
 				return;
 			}
-			Faction f = FactionManager.getByMember(p.getName());
-			if(!p.hasPermission("dowsing.admin") && (f == null || !n.getFaction().getId().equalsIgnoreCase(f.getId()))) {
-				p.sendMessage("§cCannot change another faction's node");
+			Guild g = FactionManager.getGuildByMember(p.getName());
+			if(!p.hasPermission("dowsing.admin") && (g == null || n.getGuild() == null || !n.getGuild().getId().equalsIgnoreCase(g.getId()))) {
+				p.sendMessage("§cCannot change another guild's node");
 				p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 				return;
 			}
@@ -342,8 +346,8 @@ public class NodeManager implements Listener{
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 				inv.typeView(p, n);
 			} else if(e.getSlot() == 24) {
-				if(f.canPurchaseCapacity()) {
-					purchaseCapacity(p, f, n, e.getClickedInventory());
+				if(canPurchaseCapacity(g)) {
+					purchaseCapacity(p, g, n, e.getClickedInventory());
 				} else if(e.getCurrentItem().getType().equals(Material.NETHER_STAR)) {
 					p.sendMessage("§cAlready purchased the maximum extra capacity");
 					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
@@ -382,7 +386,7 @@ public class NodeManager implements Listener{
 				inv.confirmView(p);
 			} else if(e.getSlot() == 6) {
 				if(!n.getBlock().isTransferable()) return;
-				n.setFaction(null);
+				n.setGuild(null);
 				p.sendMessage("§aNode set as claimable");
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 				p.closeInventory();
@@ -402,7 +406,7 @@ public class NodeManager implements Listener{
 			}
 		} else if(currentSlot.get(p) != null && e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+" Node: "+WordUtils.capitalize(currentSlot.get(p).getId().replace("_", " ")))) {
 			e.setCancelled(true);
-			if(!n.hasFaction()) {
+			if(!n.hasGuild()) {
 				n.breakNode();
 				nodes.remove(n);
 				p.closeInventory();
@@ -436,7 +440,7 @@ public class NodeManager implements Listener{
 			currentNode.put(p, n);
 		} else if(e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+" Node: Type")) {
 			e.setCancelled(true);
-			if(!n.hasFaction()) {
+			if(!n.hasGuild()) {
 				n.breakNode();
 				nodes.remove(n);
 				p.closeInventory();
@@ -469,7 +473,7 @@ public class NodeManager implements Listener{
 			inv.confirmView(p);
 		} else if(e.getView().getTitle().equalsIgnoreCase("§7Confirm Action")) {
 			e.setCancelled(true);
-			if(!n.hasFaction()) {
+			if(!n.hasGuild()) {
 				n.breakNode();
 				nodes.remove(n);
 				p.closeInventory();
@@ -486,20 +490,20 @@ public class NodeManager implements Listener{
 			}
 		}
 	}
-	private void purchaseCapacity(Player p, Faction f, Node n, Inventory i) {
+	private void purchaseCapacity(Player p, Guild g, Node n, Inventory i) {
 		double cost = n.getNodeCapacityCost();
-		if(f.getBank() == null) {
+		if(g.getBank() == null) {
 			p.sendMessage("§cNo bank");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
-		if(f.getBank().getWealth() < cost) {
+		if(g.isBankrupt() || g.getBank().getWealth() < cost) {
 			p.sendMessage("§cNot enough funds");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
-		f.getBank().withdraw(cost);
-		f.setExtraNodeCapacity(f.getExtraNodeCapacity()+1);
+		g.getBank().withdraw(cost);
+		extraCapacityByGuild.put(g.getId(), getExtraCapacity(g)+1);
 		p.sendMessage("§aPurchased +1 Capacity");
 		p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 		InventoryManager inv = new InventoryManager();
@@ -513,15 +517,15 @@ public class NodeManager implements Listener{
 			return;
 		}
 		Level newLvl = n.getCurrentType().getLevels().get(n.getLevel());
-		Faction f = n.getFaction();
+		Guild g = n.getGuild();
 		Double cost = newLvl.getCost()*n.getCostIncrease();
-		if(f.getBank() == null || f.getBank().getWealth() < cost) {
-			p.sendMessage("§cFaction bank does not have enough funds");
+		if(g == null || g.getBank() == null || g.isBankrupt() || g.getBank().getWealth() < cost) {
+			p.sendMessage("§cGuild bank does not have enough funds");
 			p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
 			return;
 		}
 		p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
-		f.getBank().withdraw(cost);
+		g.getBank().withdraw(cost);
 		n.setLevel(n.getLevel()+1);
 		InventoryManager inv = new InventoryManager();
 		n.update();
@@ -535,7 +539,9 @@ public class NodeManager implements Listener{
 		}
 		Level lvl = n.getCurrentType().getLevels().get(n.getLevel()-1);
 		Double refund = lvl.getCost()*Cache.refundPercentage;
-		n.getFaction().getBank().deposit(refund);
+		if(n.getGuild() != null && n.getGuild().getBank() != null) {
+			n.getGuild().getBank().deposit(refund);
+		}
 		p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 		n.setLevel(n.getLevel()-1);
 		InventoryManager inv = new InventoryManager();

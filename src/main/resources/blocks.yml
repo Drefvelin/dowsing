@@ -1,6 +1,84 @@
-one_denar:
-  item: v.gold_ingot
-  value: 1.0
-point_one_denar:
-  item: v.iron_ingot
-  value: 0.1
+master_node:
+    resource: "§fMaster"
+    block: v.end_portal_frame
+    main_types:
+        - ore_mine
+        - magic_mine
+        - farm
+        - plantation
+        - forestry
+        - quarry
+        - royal_mine_prologue
+general_node:
+    resource: "§fGeneral"
+    block: ia.tfmc:general_node
+    main_types:
+        - ore_mine
+        - magic_mine
+        - farm
+        - plantation
+        - forestry
+        - quarry
+mining_node:
+    resource: "§fMining"
+    block: ia.tfmc:mining_node
+    main_types:
+        - ore_mine
+        - magic_mine
+farming_node:
+    resource: "§fFarming"
+    block: ia.tfmc:farming_node
+    main_types:
+        - farm
+        - plantation
+wood_node:
+    resource: "§fForestry"
+    block: ia.tfmc:wood_node
+    main_types:
+        - forestry
+quarry_node:
+    resource: "§fQuarry"
+    block: ia.tfmc:quarry_node
+    main_types:
+        - quarry
+royal_node:
+    resource: "§6Royal Node"
+    block: ia.tfmc:royal_node
+    special: true #when placed down it starts as unclaimed
+    breakable: false
+    transferable: true #true is the default but now you know its a settable flag :)
+    tier: 2
+    main_types:
+        - royal_mine_act2
+        - royal_mine_act3
+royal_node_revenor:
+    resource: "§cRoyal Revenor"
+    block: ia.tfmc:royal_node_revenor
+    special: true #when placed down it starts as unclaimed
+    breakable: false
+    transferable: true #true is the default but now you know its a settable flag :)
+    title: KINGDOM_1
+    main_types:
+        - royal_mine_prologue
+        - royal_mine_act1
+royal_node_domenia:
+    resource: "§9Royal Domenia"
+    block: ia.tfmc:royal_node_domenia
+    special: true #when placed down it starts as unclaimed
+    breakable: false
+    transferable: true #true is the default but now you know its a settable flag :)
+    #tier: 1 #Province, probably want to make it 3 (duchy) or something
+    title: KINGDOM_2
+    main_types:
+        - royal_mine_prologue
+        - royal_mine_act1
+royal_node_sabarissa:
+    resource: "§2Royal Sabarissa"
+    block: ia.tfmc:royal_node_sabarissa
+    special: true #when placed down it starts as unclaimed
+    breakable: false
+    transferable: true #true is the default but now you know its a settable flag :)
+    title: KINGDOM_3
+    main_types:
+        - royal_mine_prologue
+        - royal_mine_act1

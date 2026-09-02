@@ -1,6 +1,141 @@
-one_denar:
-  item: v.gold_ingot
-  value: 1.0
-point_one_denar:
-  item: v.iron_ingot
-  value: 0.1
+ore_mine_focus_slot:
+    slot: 11
+    production_methods:
+        - ore_focus
+        - niter_focus
+        - gemstone_focus
+        - iron_focus
+        - quartz_focus
+magic_mine_focus_slot:
+    slot: 11
+    production_methods:
+        - dust_focus
+        - crystal_focus
+        - runestone_focus
+        - artifact_focus
+        - arcane_crystal_focus
+vegetable_focus_slot:
+    slot: 11
+    production_methods:
+        - vegetable_farm
+        - onion_farm
+        - exotic_farm
+        - yeast_production
+        - fruit_orchard
+        - exotic_fruit_orchard
+plantation_focus_slot:
+    slot: 11
+    production_methods:
+        - material_plantation
+        - spice_plantation
+        - sweet_spice_plantation
+wood_focus_slot:
+    slot: 11
+    production_methods:
+        - wood_focus
+        - flower_focus
+        - rare_wood_focus
+quarry_focus_slot:
+    slot: 11
+    production_methods:
+        - stone_focus
+        - sandstone_focus
+        - volcanic_focus
+        - clay_focus
+tool_slot:
+    slot: 10
+    production_methods:
+        - stone_tools
+        - iron_tools
+        - steel_tools
+        - diamond_tools
+        - abyssalite_tools
+        - mythril_tools
+tool_slot_farming:
+    slot: 10
+    production_methods:
+        - stone_hoes
+        - iron_hoes
+        - steel_hoes
+        - diamond_hoes
+        - abyssalite_hoes
+        - mythril_hoes
+tool_slot_forestry:
+    slot: 10
+    production_methods:
+        - stone_axes
+        - iron_axes
+        - steel_axes
+        - diamond_axes
+        - abyssalite_axes
+        - mythril_axes
+tool_slot_shovel:
+    slot: 10
+    production_methods:
+        - stone_shovels
+        - iron_shovels
+        - steel_shovels
+        - diamond_shovels
+        - abyssalite_shovels
+        - mythril_shovels
+explosives_slot:
+    slot: 14
+    production_methods:
+        - no_explosives
+        - basic_explosives
+        - dynamite
+        - arcane_mining
+refinery_slot:
+    slot: 12
+    production_methods:
+        - no_refinery
+        - basic_refinery
+        - advanced_refinery
+        - industrial_refinery
+        - arcane_refinery
+light_slot:
+    slot: 13
+    production_methods:
+        - no_light
+        - torches
+        - lanterns
+fertilizer_slot:
+    slot: 12
+    production_methods:
+        - no_fertilizer
+        - basic_fertilizer
+        - advanced_fertilizer
+irrigation_slot_forestry:
+    slot: 13
+    production_methods:
+        - no_forestry_irrigation
+        - basic_forestry_irrigation
+        - steam_powered_forestry_irrigation
+        - arcane_forestry_irrigation
+irrigation_slot_farm:
+    slot: 13
+    production_methods:
+        - no_farm_irrigation
+        - basic_farm_irrigation
+        - steam_powered_farm_irrigation
+        - arcane_farm_irrigation
+#Royal node
+royal_mine_focus_slot_prologue:
+    slot: 11
+    production_methods:
+        - prologue_1
+royal_mine_focus_slot_act1:
+    slot: 11
+    production_methods:
+        - act1_1
+        - act1_2
+royal_mine_focus_slot_act2:
+    slot: 11
+    production_methods:
+        - act2_1
+        - act2_2
+        - act2_3
+royal_mine_focus_slot_act3:
+    slot: 11
+    production_methods:
+        - act3_1

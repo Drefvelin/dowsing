@@ -20,22 +20,17 @@ import dev.lone.itemsadder.api.CustomFurniture;
 import me.Plugins.Dowsing.Cache;
 import me.Plugins.Dowsing.Managers.NodeManager;
 import me.Plugins.Dowsing.Utils.Database;
+import me.Plugins.Dowsing.Utils.DropPaths;
 import me.Plugins.Dowsing.Utils.ItemDropper;
 import me.Plugins.Dowsing.Utils.NodeEngine;
-import me.Plugins.SimpleFactions.Loaders.TierLoader;
-import me.Plugins.SimpleFactions.Loaders.TitleLoader;
-import me.Plugins.SimpleFactions.Managers.TitleManager;
-import me.Plugins.SimpleFactions.Objects.Faction;
-import me.Plugins.SimpleFactions.Objects.Modifier;
-import me.Plugins.SimpleFactions.Tiers.Title;
+import me.Plugins.SimpleFactions.Guild.Guild;
+import me.Plugins.SimpleFactions.Managers.FactionManager;
 import me.Plugins.SimpleFactions.Utils.Formatter;
 import me.Plugins.SimpleFactions.Utils.Permissions;
-import me.Plugins.SimpleFactions.enums.FactionModifiers;
-import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class Node {
 	UUID id;
-	Faction faction;
+	Guild guild;
 	Boolean isActive;
 	Location loc;
 	Integer naturalYield;
@@ -74,8 +69,8 @@ public class Node {
 	public void setId(UUID id) {
 		this.id = id;
 	}
-	public Boolean hasFaction() {
-		return faction != null;
+	public Boolean hasGuild() {
+		return resolveGuild() != null;
 	}
 	public Integer getExtraction() {
 		return extraction;
@@ -158,11 +153,11 @@ public class Node {
 	public void setTimeLeft(Integer timeLeft) {
 		this.timeLeft = timeLeft;
 	}
-	public Faction getFaction() {
-		return faction;
+	public Guild getGuild() {
+		return resolveGuild();
 	}
-	public void setFaction(Faction f) {
-		this.faction = f;
+	public void setGuild(Guild g) {
+		this.guild = g;
 	}
 	public Boolean getIsActive() {
 		return isActive;
@@ -202,7 +197,8 @@ public class Node {
 	}
 	public double getNodeCapacityCost() {
 		Formatter format = new Formatter();
-		return format.formatDouble(Cache.extraCapacityCost+(Cache.extraCapacityCost*faction.getExtraNodeCapacity()));
+		int extra = NodeManager.getExtraCapacity(resolveGuild());
+		return format.formatDouble(Cache.extraCapacityCost+(Cache.extraCapacityCost*extra));
 	}
 	public Double getCostIncrease() {
 		return costIncrease;
@@ -211,7 +207,7 @@ public class Node {
 		this.costIncrease = costIncrease;
 	}
 	public boolean isClaimable() {
-		return faction == null;
+		return resolveGuild() == null;
 	}
 
 	//Efficiency
@@ -219,48 +215,49 @@ public class Node {
 		return efficiency;
 	}
 
-	public boolean canHold(Faction f){
-		Player p = Bukkit.getPlayerExact(f.getLeader());
+	Guild resolveGuild() {
+		if(guild == null) {
+			return null;
+		}
+		Guild live = FactionManager.getGuildByString(guild.getId());
+		if(live == null) {
+			guild = null;
+			return null;
+		}
+		guild = live;
+		return guild;
+	}
+
+	public boolean canHold(Guild g){
+		if(g == null) return false;
+		Player p = Bukkit.getPlayerExact(g.getLeader());
 		if(p != null && p.isOnline() && Permissions.isAdmin(p)) return true;
-		if(f.getMembers().size() < Cache.minMembersForNode) return false;
-		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) > 0) return false;
-		if(f.getTier().getTier() < block.getTier()) return false;
-		if(block.hasTitle() && !TitleManager.titleIsInRealm(f, block.getTitle())) return false;
+		if(g.getMembers().size() < Cache.minMembersForNode) return false;
+		if(NodeManager.getNodeAmount(g)-NodeManager.getNodeCapacity(g) > 0) return false;
 		return true;
 	}
 
-	public boolean canClaim(Player p, Faction f){
+	public boolean canClaim(Player p, Guild g){
 		if(Permissions.isAdmin(p)) return true;
-		if(!isClaimable()) return false; //safeguard
-		if(f.getMembers().size() < Cache.minMembersForNode){
-			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your faction to claim this node!");
+		if(!isClaimable()) return false;
+		if(g.getMembers().size() < Cache.minMembersForNode){
+			p.sendMessage("§cYou need at least "+Cache.minMembersForNode+" members in your guild to claim this node!");
 			return false;
 		}
-		if(NodeManager.getNodeAmount(f)-NodeManager.getNodeCapacity(f) >= 0 && !block.isSpecial()) {
+		if(NodeManager.getNodeAmount(g)-NodeManager.getNodeCapacity(g) >= 0 && !block.isSpecial()) {
 			p.sendMessage("§cYou are already filled your node capacity!");
 			return false;
 		}
-		if(f.getTier().getTier() < block.getTier()) {
-			p.sendMessage("§cYour faction tier must be at least "+TierLoader.getByLevel(block.getTier()).getName()+" §7(currently "+f.getTier().getName()+"§7) §c to claim this node!");
-			return false;
-		}
-		if(block.hasTitle() && !TitleManager.titleIsInRealm(f, block.getTitle())) {
-			Title t = TitleLoader.getById(block.getTitle());
-			if(t != null){
-				p.sendMessage(StringFormatter.formatHex("§cEither your faction or one of your subjects need to hold the #d9caa7"+t.getName()+ " §7("+t.getTier().getName()+"§7) §ctitle!"));
-			}
-			return false;
-		}
 		return true;
 	}
 
-	public Node(Location l, Faction f, NodeBlock b) {
+	public Node(Location l, Guild g, NodeBlock b) {
 		this.id = UUID.randomUUID();
 		this.block = b;
 		this.loc = l;
-		this.faction = f;
+		this.guild = g;
 		if(b.isSpecial()){
-			this.faction = null;
+			this.guild = null;
 		}
 		this.efficiency = 50;
 		this.isActive = false;
@@ -285,15 +282,11 @@ public class Node {
 		if(!isClaimable()) update();
 		
 	}
-	public Node(UUID id, NodeBlock b, Location l, Faction f, Boolean active, int lvl, int cycleTime, NodeType currentType, int timeLeft, int inputCounter, double efficiency) {
+	public Node(UUID id, NodeBlock b, Location l, Guild g, Boolean active, int lvl, int cycleTime, NodeType currentType, int timeLeft, int inputCounter, double efficiency) {
 		this.id = id;
 		this.block = b;
 		this.loc = l;
-		if(f != null) {
-			this.faction = f;
-		} else {
-			this.faction = null;
-		}
+		this.guild = g;
 		this.efficiency = efficiency;
 		this.isActive = active;
 		this.level = lvl;
@@ -328,14 +321,15 @@ public class Node {
 
 	public void check() {
 		if(isClaimable()) return;
-		if(faction == null) return;
-		if(canHold(faction)) return;
-		Player p = Bukkit.getPlayer(faction.getLeader());
+		Guild g = resolveGuild();
+		if(g == null) return;
+		if(canHold(g)) return;
+		Player p = Bukkit.getPlayer(g.getLeader());
 		if(p != null && p.isOnline()) {
 			p.sendMessage("§cYou lost control of the "+block.getResource()+" Node §c!");
 			p.closeInventory();
 		}
-		faction = null;
+		guild = null;
 	}
 
 	public void tick() {
@@ -414,12 +408,12 @@ public class Node {
 				this.errors.add("§7Lacking resources");
 			}
 		}
-		if(this.faction.getBank() == null) {
+		if(this.guild == null || this.guild.getBank() == null || this.guild.isBankrupt()) {
 			failed = true;
 			this.errors.add("§7No bank");
 		}
-		if(this.faction.getBank() != null) {
-			if(this.faction.getBank().getWealth() < this.upkeep) {
+		if(this.guild != null && this.guild.getBank() != null) {
+			if(this.guild.isBankrupt() || this.guild.getBank().getWealth() < this.upkeep) {
 				failed = true;
 				this.errors.add("§7Lacking upkeep");
 			}
@@ -440,10 +434,8 @@ public class Node {
 		if(failed) {
 			return;
 		}
-		this.faction.getBank().withdraw(this.upkeep);
+		this.guild.getBank().withdraw(this.upkeep);
 		this.isActive = true;
-		this.faction.addPersistentPrestigeModifier(new Modifier("Nodes", this.prestigeGain));
-		this.faction.updatePrestige();
 		this.timeLeft = this.modifiedTime;
 		this.cycleTime = 0;
 		ng.takeInputs(this);
@@ -451,8 +443,6 @@ public class Node {
 	public void deActivate() {
 		this.isActive = false;
 		if(isClaimable()) return;
-		this.faction.addPersistentPrestigeModifier(new Modifier("Nodes", this.prestigeGain*-1));
-		this.faction.updatePrestige();
 		if(this.cycleTime > 0 && this.cycleTime < Cache.cycleLength) {
 			while(this.getInputCounter() > 0) {
 				refund();
@@ -461,15 +451,15 @@ public class Node {
 	}
 
 	public void growEfficiency() {
-		if(faction == null) return;
-		int members = faction.getMembers().size();
+		if(resolveGuild() == null) return;
+		int members = guild.getMembers().size();
 		double growth = Math.min(1.0, members*Cache.efficiencyGrowthPerMember);
 		updateEfficiency(growth);
 	}
 
 	public double getMaxEfficiency() {
-		if(faction == null) return 0;
-		return Math.min(100.0, faction.getMembers().size()*Cache.maxEfficiencyPerMember);
+		if(resolveGuild() == null) return 0;
+		return Math.min(100.0, guild.getMembers().size()*Cache.maxEfficiencyPerMember);
 	}
 
 	public void updateEfficiency(double eff) {
@@ -496,12 +486,9 @@ public class Node {
 		this.extraction = 0;
 		this.naturalYield = 0;
 		this.upkeep = 0.0;
-		Double newPrestige = 0.0;
-		Double newWealthModifier = 0.0;
 		try {
 			this.naturalYield = getNaturalYieldFromChunk(this.currentType.getResource(), this.loc);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		for(NodeSlot slot : this.getCurrentType().getSlots()) {
@@ -511,33 +498,19 @@ public class Node {
 					continue;
 				}
 				runEffect(s);
-				newPrestige = newPrestige+getAddedPrestige(s);
 			}
 		}
 		Level lvl = this.getCurrentType().getLevels().get(this.getLevel()-1);
 		for(String s : lvl.getEffects()) {
 			runEffect(s);
-			newPrestige = newPrestige+getAddedPrestige(s);
 		}
+		Double newWealthModifier = 0.0;
 		for(Level l : this.getCurrentType().getLevels()) {
 			if(l.getLevel() <= this.getLevel()) {
 				newWealthModifier = newWealthModifier+l.getCost();
 			}
 		}
-		if(faction != null) {
-			if(this.isActive) {
-				if(this.prestigeGain != newPrestige) {
-					this.faction.addPersistentPrestigeModifier(new Modifier("Nodes", (this.prestigeGain-newPrestige)*-1));
-					this.faction.updatePrestige();
-					this.prestigeGain = newPrestige;
-				}
-			}
-			if(this.wealthModifier != newWealthModifier) {
-				this.faction.addPersistentWealthModifier(new Modifier("Nodes", (this.wealthModifier-newWealthModifier)*-1));
-				this.faction.updateWealth();
-				this.wealthModifier = newWealthModifier;
-			}
-		}
+		this.wealthModifier = newWealthModifier;
 		if(this.extraction > this.naturalYield) {
 			this.extraction = this.naturalYield;
 		}
@@ -553,7 +526,6 @@ public class Node {
 				e = e-extractionY;
 			}
 		}
-		if(faction != null) this.timeModifier -= faction.getModifier(FactionModifiers.NODE_SPEED).getAmount();
 		if(this.timeModifier < -99) {
 			modifiedTime = 1;
 		} else {
@@ -562,7 +534,7 @@ public class Node {
 		updateEfficiencyTime();
 		if(timeLeft > modifiedTime) timeLeft = modifiedTime;
 		setCompleteDrops();
-		int newMultipler = 1+NodeManager.getNodeAmount(this.faction)-getCapacity();
+		int newMultipler = 1+NodeManager.getNodeAmount(this.guild)-getCapacity();
 		if(newMultipler < 1) {
 			newMultipler = 1;
 		}
@@ -580,31 +552,33 @@ public class Node {
 	}
 	public int getCapacity() {
 		int capacity = 1;
-		if(Cache.extraCapacity) {
-			int members = this.faction.getMembers().size();
+		if(Cache.extraCapacity && resolveGuild() != null) {
+			int members = this.guild.getMembers().size();
 			int added = (int) Math.floorDiv(members, Cache.membersPerCapacity);
-			capacity = capacity+added+faction.getExtraNodeCapacity();
+			capacity = capacity+added+NodeManager.getExtraCapacity(this.guild);
 		}
 		return capacity;
 	}
 	void setCompleteDrops() {
 		this.completeDrop.clear();
 		for(String s : this.getCurrentType().getDrops()) {
-			String key = s.split("\\(")[0];
-			Double amount = Double.parseDouble(s.split("\\(")[1].replace(")", ""));
-			if(this.completeDrop.containsKey(key)) {
-				amount = amount+this.completeDrop.get(key);
-			}
-			this.completeDrop.put(key, amount);
+			addCompleteDrop(s);
 		}
 		for(String s : this.addedDrops) {
-			String key = s.split("\\(")[0];
-			Double amount = Double.parseDouble(s.split("\\(")[1].replace(")", ""));
-			if(this.completeDrop.containsKey(key)) {
-				amount = amount+this.completeDrop.get(key);
-			}
-			this.completeDrop.put(key, amount);
+			addCompleteDrop(s);
 		}
+	}
+	void addCompleteDrop(String token) {
+		String[] drop = DropPaths.parseStored(token);
+		if(drop == null) {
+			return;
+		}
+		String key = drop[0];
+		Double amount = Double.parseDouble(drop[1]);
+		if(this.completeDrop.containsKey(key)) {
+			amount = amount+this.completeDrop.get(key);
+		}
+		this.completeDrop.put(key, amount);
 	}
 	void runEffect(String e) {
 		String type = e.split("\\(")[0];
@@ -613,7 +587,10 @@ public class Node {
 		} else if(type.equalsIgnoreCase("yield")) {
 			yield = yield+Integer.parseInt(e.split("\\(")[1].replace(")", ""));
 		} else if(type.equalsIgnoreCase("add_drop")) {
-			addedDrops.add(e.split("\\(")[1].replace(")", "").split("\\,")[0]+"("+e.split("\\(")[1].replace(")", "").split("\\,")[1]+")");
+			String[] drop = DropPaths.parseAddDropEffect(e);
+			if(drop != null) {
+				addedDrops.add(DropPaths.formatStored(drop[0], Double.parseDouble(drop[1])));
+			}
 		} else if(type.equalsIgnoreCase("extraction")) {
 			extraction = extraction+Integer.parseInt(e.split("\\(")[1].replace(")", ""));
 		} else if(type.equalsIgnoreCase("upkeep")) {

@@ -8,11 +8,10 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import dev.lone.itemsadder.api.CustomStack;
-import io.lumine.mythic.lib.api.item.NBTItem;
 import me.Plugins.Dowsing.Objects.Node;
 import me.Plugins.Dowsing.Objects.NodeSlot;
 import me.Plugins.Dowsing.Objects.ProductionMethod;
+import me.Plugins.TLibs.TLibs;
 
 public class NodeEngine {
 	public Boolean hasBarrel(Node n) {
@@ -38,8 +37,12 @@ public class NodeEngine {
 		HashMap<String, Integer> inputs = new HashMap<>();
 		for(NodeSlot slot : n.getCurrentType().getSlots()) {
 			for(String s : slot.getActivePm().getInputs()) {
-				String key = s.split("\\(")[0];
-				Integer amount = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
+				String[] cost = DropPaths.parseStored(s);
+				if(cost == null) {
+					continue;
+				}
+				String key = cost[0];
+				Integer amount = Integer.parseInt(cost[1]);
 				amount = amount*n.getMultiplier();
 				if(inputs.containsKey(key)) {
 					amount = amount +inputs.get(key);
@@ -65,21 +68,7 @@ public class NodeEngine {
 		return false;
 	}
 	Boolean compareItem(String path, ItemStack item) {
-		String type = path.split("\\.")[0];
-		if(type.equalsIgnoreCase("v")) {
-			if(CustomStack.byItemStack(item) != null) return false;
-			if(NBTItem.get(item).hasType()) return false;
-			if(item.getType().equals(Material.valueOf(path.split("\\.")[1].toUpperCase()))) return true;
-		} else if(path.split("\\.")[0].equalsIgnoreCase("ia")) {
-			if(CustomStack.byItemStack(item) == null) return false;
-			CustomStack stack = CustomStack.byItemStack(item);
-			if(stack.getConfigPath().equalsIgnoreCase(path.split("\\.")[1])) return true;
-		} else if(path.split("\\.")[0].equalsIgnoreCase("m")) {
-			NBTItem nbt = NBTItem.get(item);
-			if(!nbt.hasType()) return false;
-			if(nbt.getType().equalsIgnoreCase(path.split("\\.")[1]) && nbt.getString("MMOITEMS_ITEM_ID").equalsIgnoreCase(path.split("\\.")[2])) return true;
-		}
-		return false;
+		return TLibs.getItemAPI().getChecker().checkItemWithPath(item, path);
 	}
 	public void refund(Node n) {
 		Location l = new Location(n.getLoc().getWorld(), n.getLoc().getX(), n.getLoc().getY(), n.getLoc().getZ());
@@ -90,8 +79,12 @@ public class NodeEngine {
 		HashMap<String, Integer> inputs = new HashMap<>();
 		for(NodeSlot slot : n.getCurrentType().getSlots()) {
 			for(String s : slot.getActivePm().getInputs()) {
-				String key = s.split("\\(")[0];
-				Integer amount = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
+				String[] cost = DropPaths.parseStored(s);
+				if(cost == null) {
+					continue;
+				}
+				String key = cost[0];
+				Integer amount = Integer.parseInt(cost[1]);
 				amount = amount*n.getMultiplier();
 				if(inputs.containsKey(key)) {
 					amount = amount +inputs.get(key);
@@ -99,8 +92,8 @@ public class NodeEngine {
 				inputs.put(key, amount);
 			}
 		}
-		if(n.getFaction().getBank() != null) {
-			n.getFaction().getBank().deposit(n.getUpkeep());
+		if(n.getGuild() != null && n.getGuild().getBank() != null) {
+			n.getGuild().getBank().deposit(n.getUpkeep());
 		}
 		n.setInputCounter(n.getInputCounter()-1);
 		for(String key : inputs.keySet()) {
@@ -122,8 +115,12 @@ public class NodeEngine {
 		HashMap<String, Integer> inputs = new HashMap<>();
 		for(NodeSlot slot : n.getCurrentType().getSlots()) {
 			for(String s : slot.getActivePm().getInputs()) {
-				String key = s.split("\\(")[0];
-				Integer amount = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
+				String[] cost = DropPaths.parseStored(s);
+				if(cost == null) {
+					continue;
+				}
+				String key = cost[0];
+				Integer amount = Integer.parseInt(cost[1]);
 				amount = amount*n.getMultiplier();
 				if(inputs.containsKey(key)) {
 					amount = amount +inputs.get(key);

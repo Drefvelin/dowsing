@@ -1,6 +1,591 @@
-one_denar:
-  item: v.gold_ingot
-  value: 1.0
-point_one_denar:
-  item: v.iron_ingot
-  value: 0.1
+ore_mine:
+    name: "§fOre Mine"
+    timer: 240
+    resource: mineral
+    time-reduction-per-natural-yield: -2.0
+    natural-yield-per-yield: 2
+    item:
+        name: "§fOre Mine"
+        material: v.raw_iron
+    slots:
+        - tool_slot
+        - ore_mine_focus_slot
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - time_modifier(45)
+                - upkeep(4)
+        2:
+            cost: 40
+            effects:
+                - yield(1)
+                - time_modifier(40)
+                - prestige(1)
+                - upkeep(8)
+        3:
+            cost: 80
+            effects:
+                - yield(2)
+                - time_modifier(35)
+                - prestige(2)
+                - upkeep(12)
+        4:
+            cost: 160
+            effects:
+                - yield(2)
+                - time_modifier(30)
+                - prestige(4)
+                - upkeep(16)
+        5:
+            cost: 320
+            effects:
+                - yield(3)
+                - time_modifier(25)
+                - prestige(8)
+                - upkeep(20)
+        6:
+            cost: 640
+            effects:
+                - yield(3)
+                - time_modifier(20)
+                - prestige(16)
+                - upkeep(24)
+        7:
+            cost: 1280
+            effects:
+                - yield(4)
+                - time_modifier(15)
+                - prestige(32)
+                - upkeep(28)
+        8:
+            cost: 2560
+            effects:
+                - yield(4)
+                - time_modifier(10)
+                - prestige(64)
+                - upkeep(32)
+        9:
+            cost: 5120
+            effects:
+                - yield(5)
+                - time_modifier(5)
+                - prestige(128)
+                - upkeep(36)
+        10:
+            cost: 10060
+            effects:
+                - yield(6)
+                - time_modifier(0)
+                - prestige(256)
+                - upkeep(40)
+magic_mine:
+    name: "§dMagical Mine"
+    timer: 240
+    resource: magic
+    time-reduction-per-natural-yield: -2.0
+    natural-yield-per-yield: 2
+    item:
+        name: "§dMagical Mine"
+        material: m.currency.enchanted_dust
+    slots:
+        - tool_slot
+        - magic_mine_focus_slot
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - time_modifier(45)
+                - upkeep(4)
+        2:
+            cost: 40
+            effects:
+                - yield(1)
+                - time_modifier(40)
+                - prestige(1)
+                - upkeep(8)
+        3:
+            cost: 80
+            effects:
+                - yield(2)
+                - time_modifier(35)
+                - prestige(2)
+                - upkeep(12)
+        4:
+            cost: 160
+            effects:
+                - yield(2)
+                - time_modifier(30)
+                - prestige(4)
+                - upkeep(16)
+        5:
+            cost: 320
+            effects:
+                - yield(3)
+                - time_modifier(25)
+                - prestige(8)
+                - upkeep(20)
+        6:
+            cost: 640
+            effects:
+                - yield(3)
+                - time_modifier(20)
+                - prestige(16)
+                - upkeep(24)
+        7:
+            cost: 1280
+            effects:
+                - yield(4)
+                - time_modifier(15)
+                - prestige(32)
+                - upkeep(28)
+        8:
+            cost: 2560
+            effects:
+                - yield(4)
+                - time_modifier(10)
+                - prestige(64)
+                - upkeep(32)
+        9:
+            cost: 5120
+            effects:
+                - yield(5)
+                - time_modifier(5)
+                - prestige(128)
+                - upkeep(36)
+        10:
+            cost: 10060
+            effects:
+                - yield(6)
+                - time_modifier(0)
+                - prestige(256)
+                - upkeep(40)
+farm:
+    name: "§fFarm"
+    timer: 120
+    resource: farm
+    time-reduction-per-natural-yield: -2.0
+    natural-yield-per-yield: 1
+    item:
+        name: "§fFarm"
+        material: m.foods.lettuce
+    slots:
+        - tool_slot_farming
+        - vegetable_focus_slot
+        - fertilizer_slot
+        - irrigation_slot_farm
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - time_modifier(45)
+                - upkeep(4)
+        2:
+            cost: 40
+            effects:
+                - yield(1)
+                - time_modifier(40)
+                - prestige(1)
+                - upkeep(8)
+        3:
+            cost: 80
+            effects:
+                - yield(2)
+                - time_modifier(35)
+                - prestige(2)
+                - upkeep(12)
+        4:
+            cost: 160
+            effects:
+                - yield(2)
+                - time_modifier(30)
+                - prestige(4)
+                - upkeep(16)
+        5:
+            cost: 320
+            effects:
+                - yield(3)
+                - time_modifier(25)
+                - prestige(8)
+                - upkeep(20)
+        6:
+            cost: 640
+            effects:
+                - yield(3)
+                - time_modifier(20)
+                - prestige(16)
+                - upkeep(24)
+        7:
+            cost: 1280
+            effects:
+                - yield(4)
+                - time_modifier(15)
+                - prestige(32)
+                - upkeep(28)
+        8:
+            cost: 2560
+            effects:
+                - yield(4)
+                - time_modifier(10)
+                - prestige(64)
+                - upkeep(32)
+        9:
+            cost: 5120
+            effects:
+                - yield(5)
+                - time_modifier(5)
+                - prestige(128)
+                - upkeep(36)
+        10:
+            cost: 10060
+            effects:
+                - yield(6)
+                - time_modifier(0)
+                - prestige(256)
+                - upkeep(40)
+plantation:
+    name: "§fPlantation"
+    timer: 120
+    resource: plantation
+    time-reduction-per-natural-yield: -2.0
+    natural-yield-per-yield: 1
+    item:
+        name: "§dPlantation"
+        material: v.sugar_cane
+    slots:
+        - tool_slot_farming
+        - plantation_focus_slot
+        - fertilizer_slot
+        - irrigation_slot_farm
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - time_modifier(45)
+                - upkeep(4)
+        2:
+            cost: 40
+            effects:
+                - yield(1)
+                - time_modifier(40)
+                - prestige(1)
+                - upkeep(8)
+        3:
+            cost: 80
+            effects:
+                - yield(2)
+                - time_modifier(35)
+                - prestige(2)
+                - upkeep(12)
+        4:
+            cost: 160
+            effects:
+                - yield(2)
+                - time_modifier(30)
+                - prestige(4)
+                - upkeep(16)
+        5:
+            cost: 320
+            effects:
+                - yield(3)
+                - time_modifier(25)
+                - prestige(8)
+                - upkeep(20)
+        6:
+            cost: 640
+            effects:
+                - yield(3)
+                - time_modifier(20)
+                - prestige(16)
+                - upkeep(24)
+        7:
+            cost: 1280
+            effects:
+                - yield(4)
+                - time_modifier(15)
+                - prestige(32)
+                - upkeep(28)
+        8:
+            cost: 2560
+            effects:
+                - yield(4)
+                - time_modifier(10)
+                - prestige(64)
+                - upkeep(32)
+        9:
+            cost: 5120
+            effects:
+                - yield(5)
+                - time_modifier(5)
+                - prestige(128)
+                - upkeep(36)
+        10:
+            cost: 10060
+            effects:
+                - yield(6)
+                - time_modifier(0)
+                - prestige(256)
+                - upkeep(40)
+forestry:
+    name: "§fForestry"
+    timer: 60
+    resource: wood
+    time-reduction-per-natural-yield: -2.0
+    natural-yield-per-yield: 1
+    item:
+        name: "§fForestry"
+        material: v.oak_sapling
+    slots:
+        - tool_slot_forestry
+        - wood_focus_slot
+        - refinery_slot
+        - irrigation_slot_forestry
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - time_modifier(45)
+                - upkeep(4)
+        2:
+            cost: 40
+            effects:
+                - yield(1)
+                - time_modifier(40)
+                - prestige(1)
+                - upkeep(8)
+        3:
+            cost: 80
+            effects:
+                - yield(2)
+                - time_modifier(35)
+                - prestige(2)
+                - upkeep(12)
+        4:
+            cost: 160
+            effects:
+                - yield(2)
+                - time_modifier(30)
+                - prestige(4)
+                - upkeep(16)
+        5:
+            cost: 320
+            effects:
+                - yield(3)
+                - time_modifier(25)
+                - prestige(8)
+                - upkeep(20)
+        6:
+            cost: 640
+            effects:
+                - yield(3)
+                - time_modifier(20)
+                - prestige(16)
+                - upkeep(24)
+        7:
+            cost: 1280
+            effects:
+                - yield(4)
+                - time_modifier(15)
+                - prestige(32)
+                - upkeep(28)
+        8:
+            cost: 2560
+            effects:
+                - yield(4)
+                - time_modifier(10)
+                - prestige(64)
+                - upkeep(32)
+        9:
+            cost: 5120
+            effects:
+                - yield(5)
+                - time_modifier(5)
+                - prestige(128)
+                - upkeep(36)
+        10:
+            cost: 10060
+            effects:
+                - yield(6)
+                - time_modifier(0)
+                - prestige(256)
+                - upkeep(40)
+quarry:
+    name: "§fQuarry"
+    timer: 60
+    resource: quarry
+    time-reduction-per-natural-yield: -2.0
+    natural-yield-per-yield: 1
+    item:
+        name: "§fQuarry"
+        material: v.granite
+    slots:
+        - tool_slot_shovel
+        - quarry_focus_slot
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - time_modifier(45)
+                - upkeep(4)
+        2:
+            cost: 40
+            effects:
+                - yield(1)
+                - time_modifier(40)
+                - prestige(1)
+                - upkeep(8)
+        3:
+            cost: 80
+            effects:
+                - yield(2)
+                - time_modifier(35)
+                - prestige(2)
+                - upkeep(12)
+        4:
+            cost: 160
+            effects:
+                - yield(2)
+                - time_modifier(30)
+                - prestige(4)
+                - upkeep(16)
+        5:
+            cost: 320
+            effects:
+                - yield(3)
+                - time_modifier(25)
+                - prestige(8)
+                - upkeep(20)
+        6:
+            cost: 640
+            effects:
+                - yield(3)
+                - time_modifier(20)
+                - prestige(16)
+                - upkeep(24)
+        7:
+            cost: 1280
+            effects:
+                - yield(4)
+                - time_modifier(15)
+                - prestige(32)
+                - upkeep(28)
+        8:
+            cost: 2560
+            effects:
+                - yield(4)
+                - time_modifier(10)
+                - prestige(64)
+                - upkeep(32)
+        9:
+            cost: 5120
+            effects:
+                - yield(5)
+                - time_modifier(5)
+                - prestige(128)
+                - upkeep(36)
+        10:
+            cost: 10060
+            effects:
+                - yield(6)
+                - time_modifier(0)
+                - prestige(256)
+                - upkeep(40)
+royal_mine_prologue:
+    name: "§6Royal Mine (Prologue)"
+    timer: 1080
+    resource: royal
+    time-reduction-per-natural-yield: -4.0
+    natural-yield-per-yield: 2
+    item:
+        name: "§6Royal Mine"
+        material: v.iron_ingot
+    slots:
+        - tool_slot
+        - royal_mine_focus_slot_prologue
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - upkeep(40)
+royal_mine_act1:
+    name: "§6Royal Mine (Act 1)"
+    timer: 1080
+    resource: royal
+    time-reduction-per-natural-yield: -4.0
+    natural-yield-per-yield: 2
+    item:
+        name: "§6Royal Mine"
+        material: m.materials.steel_ingot
+    slots:
+        - tool_slot
+        - royal_mine_focus_slot_act1
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - upkeep(80)
+royal_mine_act2:
+    name: "§6Royal Mine (Act 2)"
+    timer: 1440
+    resource: royal
+    time-reduction-per-natural-yield: -4.0
+    natural-yield-per-yield: 2
+    item:
+        name: "§6Royal Mine"
+        material: m.materials.abyssalite_ingot
+    slots:
+        - tool_slot
+        - royal_mine_focus_slot_act2
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(1)
+                - upkeep(80)
+royal_mine_act3:
+    name: "§6Royal Mine (Act 3)"
+    timer: 360
+    resource: royal
+    time-reduction-per-natural-yield: -4.0
+    natural-yield-per-yield: 2
+    item:
+        name: "§6Royal Mine"
+        material: m.materials.mythril_ingot
+    slots:
+        - tool_slot
+        - royal_mine_focus_slot_act3
+        - refinery_slot
+        - light_slot
+        - explosives_slot
+    levels:
+        1:
+            cost: 0
+            effects:
+                - yield(4)
+                - upkeep(80)

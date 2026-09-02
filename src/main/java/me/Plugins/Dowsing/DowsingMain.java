@@ -50,6 +50,7 @@ public class DowsingMain extends JavaPlugin{
 		createConfigs();
 		loadConfigs();
 		startManagers();
+		db.loadGuildCapacity();
 		db.loadNodes();
 		getServer().getPluginManager().registerEvents(resourceManager, plugin);
 		getServer().getPluginManager().registerEvents(nodeManager, plugin);
@@ -62,6 +63,7 @@ public class DowsingMain extends JavaPlugin{
 		for(Node n : NodeManager.nodes) {
 			db.saveNode(n);
 		}
+		db.saveGuildCapacity();
 	}
 	public void startManagers() {
 		nodeManager.start();

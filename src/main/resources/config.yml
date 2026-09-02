@@ -1,1 +1,15 @@
-dowsing_stick: unset
+dowsing_item: tools.dowsing_stick
+input_cycle_length: 720
+members_per_node_capacity: -1 #you have 1 capacity by default but get another after x members, example 4 member faction has 2 capacity. -1 disables added capacity
+enable-natural-yields: false
+
+extra-capacity-cost: 1250
+
+max-extra-capacity-from-members: 0
+
+min-members-for-node: 1
+
+efficiency-growth-per-member: 0.1
+max-efficiency-per-member: 25.0
+efficiency-loss-type: 40.0
+efficiency-loss-pm: 0.0

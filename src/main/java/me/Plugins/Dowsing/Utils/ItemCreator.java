@@ -4,64 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.WordUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import dev.lone.itemsadder.api.CustomStack;
 import me.Plugins.Dowsing.Cache;
 import me.Plugins.Dowsing.Objects.Level;
 import me.Plugins.Dowsing.Objects.Node;
 import me.Plugins.Dowsing.Objects.NodeType;
 import me.Plugins.Dowsing.Objects.ProductionMethod;
 import me.Plugins.SimpleFactions.Utils.Formatter;
-import net.Indyuce.mmoitems.MMOItems;
-import net.Indyuce.mmoitems.manager.ItemManager;
+import me.Plugins.TLibs.TLibs;
+import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class ItemCreator {
-	@SuppressWarnings("deprecation")
 	public ItemStack getItemFromPath(String s) {
-		String type = s.split("\\.")[0]; //v.emerald
-		ItemStack item = new ItemStack(Material.DIRT, 1);
-		if(type.equalsIgnoreCase("v")) {
-			item.setType(Material.valueOf(s.split("\\.")[1].toUpperCase()));
-		} else if(type.equalsIgnoreCase("m")) {
-			ItemManager itemManager = MMOItems.plugin.getItems();
-			if(itemManager.getMMOItem(MMOItems.plugin.getTypes().get(s.split("\\.")[1].toUpperCase()), s.split("\\.")[2].toUpperCase()) == null){
-				Bukkit.getLogger().info(s + " ia a malformed item input");
-				return null;
-			}
-			item =  itemManager.getMMOItem(MMOItems.plugin.getTypes().get(s.split("\\.")[1].toUpperCase()), s.split("\\.")[2].toUpperCase()).newBuilder().build(); //m.material.salt
-		} else {
-			String itemPath = s.split("\\.")[1]; //ia.tfmc:abyssalite
-			CustomStack stack = CustomStack.getInstance(itemPath);
-			if(stack != null) {
-				item = stack.getItemStack();
-				item.setAmount(1);
-			}
+		if (s == null || s.isBlank()) {
+			return null;
 		}
-		return item;
+		return TLibs.getItemAPI().getCreator().getItemFromPath(s);
 	}
 	@SuppressWarnings("deprecation")
 	public ItemStack createMenuItem(ConfigurationSection config, List<String> effects, List<String> cost, String prerequisite) {
-		ItemStack i = new ItemStack(Material.DIRT, 1);
 		String path = config.getString("material");
-		if(path.split("\\.")[0].equalsIgnoreCase("v")) {
-			i.setType(Material.valueOf(path.split("\\.")[1].toUpperCase()));
-		} else if(path.split("\\.")[0].equalsIgnoreCase("ia")) {
-			CustomStack stack = CustomStack.getInstance(path.split("\\.")[1]);
-			if(stack != null) {
-				i = stack.getItemStack();
-			}
-		} else if(path.split("\\.")[0].equalsIgnoreCase("m")) {
-			ItemManager itemManager = MMOItems.plugin.getItems();
-			if(itemManager.getMMOItem(MMOItems.plugin.getTypes().get(path.split("\\.")[1].toUpperCase()), path.split("\\.")[2].toUpperCase()) == null){
-				Bukkit.getLogger().info(path + " is a malformed item input");
-				return null;
-			}
-			i =  itemManager.getMMOItem(MMOItems.plugin.getTypes().get(path.split("\\.")[1].toUpperCase()), path.split("\\.")[2].toUpperCase()).newBuilder().build(); //m.material.salt
+		ItemStack i = getItemFromPath(path);
+		if(i == null) {
+			i = new ItemStack(Material.DIRT, 1);
+		} else {
+			i = i.clone();
 		}
 		ItemMeta m = i.getItemMeta();
 		if(config.contains("model_data")) {
@@ -126,22 +97,12 @@ public class ItemCreator {
 	}
 	@SuppressWarnings("deprecation")
 	public ItemStack createTypeItemConfig(ConfigurationSection config) {
-		ItemStack i = new ItemStack(Material.DIRT, 1);
 		String path = config.getString("material");
-		if(path.split("\\.")[0].equalsIgnoreCase("v")) {
-			i.setType(Material.valueOf(path.split("\\.")[1].toUpperCase()));
-		} else if(path.split("\\.")[0].equalsIgnoreCase("ia")) {
-			CustomStack stack = CustomStack.getInstance(path.split("\\.")[1]);
-			if(stack != null) {
-				i = stack.getItemStack();
-			}
-		} else if(path.split("\\.")[0].equalsIgnoreCase("m")) {
-			ItemManager itemManager = MMOItems.plugin.getItems();
-			if(itemManager.getMMOItem(MMOItems.plugin.getTypes().get(path.split("\\.")[1].toUpperCase()), path.split("\\.")[2].toUpperCase()) == null){
-				Bukkit.getLogger().info(path + " is a malformed item input");
-				return null;
-			}
-			i =  itemManager.getMMOItem(MMOItems.plugin.getTypes().get(path.split("\\.")[1].toUpperCase()), path.split("\\.")[2].toUpperCase()).newBuilder().build(); //m.material.salt
+		ItemStack i = getItemFromPath(path);
+		if(i == null) {
+			i = new ItemStack(Material.DIRT, 1);
+		} else {
+			i = i.clone();
 		}
 		List<String> lore = new ArrayList<String>();
 		ItemMeta m = i.getItemMeta();
@@ -339,7 +300,24 @@ public class ItemCreator {
 	}
 	public String getFormattedEffect(String s){
 		String type = s.split("\\(")[0];
-		String effect = s.split("\\(")[1].replace(")", "");
+		if(type.equalsIgnoreCase("add_drop")) {
+			String[] drop = DropPaths.parseAddDropEffect(s);
+			if(drop == null) {
+				return s;
+			}
+			String item = drop[0];
+			Double amount = Double.parseDouble(drop[1]);
+			Formatter format = new Formatter();
+			amount = format.formatDouble(amount);
+			String name;
+			if(item.equalsIgnoreCase("Nothing")) {
+				name = "Nothing";
+			} else {
+				name = getItemName(item);
+			}
+			return "§eAdded Drop: §f"+name+" §7(Weight: "+amount+")";
+		}
+		String effect = s.substring(s.indexOf('(') + 1, s.lastIndexOf(')'));
 		if(type.equalsIgnoreCase("time_modifier")) {
 			Double amount = Double.parseDouble(effect);
 			s = "§eTime Modifier: ";
@@ -356,18 +334,6 @@ public class ItemCreator {
 			} else {
 				s = s+"§c"+amount;
 			}
-		} else if(type.equalsIgnoreCase("add_drop")) {
-			String item = effect.split("\\,")[0];
-			Double amount = Double.parseDouble(effect.split("\\,")[1]);
-			Formatter format = new Formatter();
-			amount = format.formatDouble(amount);
-			String name = "";
-			if(item.equalsIgnoreCase("Nothing")) {
-				name = "Nothing";
-			} else {
-				name = getItemName(item);
-			}
-			s = "§eAdded Drop: §f"+name+" §7(Weight: "+amount+")";
 		} else if(type.equalsIgnoreCase("prestige")) {
 			Integer amount = Integer.parseInt(effect);
 			s = "§9Prestige: ";
@@ -393,27 +359,35 @@ public class ItemCreator {
 		return s;
 	}
 	public String getFormattedCost(String s, Integer m){
-		String item = s.split("\\(")[0];
-		Integer amount = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
+		String[] cost = DropPaths.parseStored(s);
+		if(cost == null) {
+			return s;
+		}
+		String item = cost[0];
+		Integer amount = Integer.parseInt(cost[1]);
 		return "§f"+getItemName(item)+"§f x"+(amount*m);
 	}
-	@SuppressWarnings("deprecation")
 	String getItemName(String path) {
-		String s = "";
-		String type = path.split("\\.")[0];
-		if(type.equalsIgnoreCase("v")) {
-			s = WordUtils.capitalize(path.split("\\.")[1].replace("_", " "));
-		} else if(path.split("\\.")[0].equalsIgnoreCase("ia")) {
-			CustomStack stack = CustomStack.getInstance(path.split("\\.")[1]);
-			if(stack != null) {
-				ItemStack i = stack.getItemStack();
-				s = i.getItemMeta().getDisplayName();
-			}
-		} else if(path.split("\\.")[0].equalsIgnoreCase("m")) {
-			ItemManager itemManager = MMOItems.plugin.getItems();
-			ItemStack item =  itemManager.getMMOItem(MMOItems.plugin.getTypes().get(path.split("\\.")[1].toUpperCase()), path.split("\\.")[2].toUpperCase()).newBuilder().build(); //m.material.salt
-			s = item.getItemMeta().getDisplayName();
+		if(path == null || path.isBlank()) {
+			return "";
 		}
-		return s;
+		if(path.equalsIgnoreCase("Nothing")) {
+			return "Nothing";
+		}
+		if(ArtifactDropNames.isMagicPath(path)) {
+			return ArtifactDropNames.label(path);
+		}
+		ItemStack item = getItemFromPath(path);
+		if(item != null && item.hasItemMeta() && item.getItemMeta().hasDisplayName()) {
+			return item.getItemMeta().getDisplayName();
+		}
+		String type = path.split("\\.")[0];
+		if(type.equalsIgnoreCase("v") && path.split("\\.").length > 1) {
+			return WordUtils.capitalize(path.split("\\.")[1].replace("_", " "));
+		}
+		if(item != null) {
+			return StringFormatter.getVanillaName(item.getType());
+		}
+		return path;
 	}
 }

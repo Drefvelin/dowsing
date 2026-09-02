@@ -1,11 +1,985 @@
+#ore mine focus
+ore_focus:
+    weight: 0
+    item:
+        name: "§fOre Production"
+        material: v.raw_iron
+    effects:
+        - yield(20)
+        - upkeep(5)
+        - add_drop(v.raw_iron,40)
+        - add_drop(v.raw_copper,35)
+        - add_drop(v.amethyst_shard,10)
+        - add_drop(v.raw_gold,10)
+        - add_drop(v.diamond,5)
+niter_focus:
+    weight: 1
+    item:
+        name: "§fNiter Production"
+        material: m.materials.niter
+    effects:
+        - prestige(4)
+        - upkeep(10)
+        - add_drop(m.materials.niter,100)
+gemstone_focus:
+    weight: 2
+    prerequisite: diamond_tools
+    item:
+        name: "§bGemstone Production"
+        material: m.gemstones.ruby
+    effects:
+        - prestige(8)
+        - time_modifier(100)
+        - upkeep(10)
+        - add_drop(v.amethyst_shard,25)
+        - add_drop(v.quartz,12)
+        - add_drop(v.diamond,8)
+        - add_drop(v.emerald,5)
+        - add_drop(m.loot.basic_gemstone_pouch,25)
+        - add_drop(m.loot.polished_gemstone_pouch,12)
+        - add_drop(m.loot.radiant_gemstone_pouch,8)
+        - add_drop(m.loot.mythical_gemstone_pouch,5)
+    cost:
+        - v.emerald(4)
+iron_focus:
+    weight: 3
+    item:
+        name: "§4Switch focus"
+        material: v.barrier
+    effects:
+        - prestige(1)
+quartz_focus:
+    weight: 4
+    item:
+        name: "§4Switch focus"
+        material: v.barrier
+    effects:
+        - prestige(1)
+#magical focus
+dust_focus:
+    weight: 0
+    item:
+        name: "§dDust Production"
+        material: m.currency.enchanted_dust
+    effects:
+        - yield(4)
+        - upkeep(5)
+        - add_drop(m.currency.enchanted_dust,100)
+crystal_focus:
+    weight: 1
+    prerequisite: iron_tools
+    item:
+        name: "§dCrystal Production"
+        material: m.materials.arcane_crystal
+    effects:
+        - yield(2)
+        - prestige(4)
+        - upkeep(5)
+        - add_drop(m.materials.arcane_crystal,50)
+        - add_drop(m.materials.slightly_magic_crystallite_shard,25)
+        - add_drop(m.materials.slightly_magic_ruby_shard,15)
+        - add_drop(m.materials.slightly_magic_emerald_shard,10)
+    cost:
+        - m.currency.enchanted_dust(2)
+runestone_focus:
+    weight: 2
+    prerequisite: diamond_tools
+    item:
+        name: "§dRunestone Production"
+        material: m.loot.staff_runestone
+    effects:
+        - prestige(8)
+        - time_modifier(200)
+        - upkeep(10)
+        - add_drop(m.currency.enchanted_dust,50)
+        - add_drop(m.loot.staff_runestone,25)
+        - add_drop(m.loot.wand_runestone,12)
+        - add_drop(m.loot.sword_runestone,8)
+        - add_drop(m.loot.armor_runestone,5)
+    cost:
+        - m.currency.enchanted_dust(4)
+artifact_focus:
+    weight: 3
+    prerequisite: diamond_tools
+    item:
+        name: "§dArtifact Recovery"
+        material: m.loot.staff_runestone
+    effects:
+        - prestige(8)
+        - time_modifier(200)
+        - upkeep(10)
+        - add_drop(magic.(rarity=common),70)
+        - add_drop(magic.(rarity=uncommon),20)
+        - add_drop(magic.(rarity=rare),8)
+        - add_drop(magic.(rarity=legendary),2)
+    cost:
+        - m.currency.enchanted_dust(4)
+crystal_shard_focus:
+    weight: 3
+    item:
+        name: "§4Switch focus"
+        material: v.barrier
+    effects:
+        - prestige(1)
+arcane_crystal_focus:
+    weight: 4
+    item:
+        name: "§4Switch focus"
+        material: v.barrier
+    effects:
+        - prestige(1)
+
+#vegetable focus
+vegetable_farm:
+    weight: 0
+    item:
+        name: "§fVegetable Farm"
+        material: m.foods.lettuce
+    effects:
+        - yield(6)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(ia.playbox_custom_crops:cucumber_seeds,10)
+        - add_drop(ia.playbox_custom_crops:lettuce_seeds,10)
+        - add_drop(ia.playbox_custom_crops:rhubarb_seeds,10)
+        - add_drop(ia.playbox_custom_crops:corn_seeds,10)
+onion_farm:
+    weight: 1
+    item:
+        name: "§fOnion Farm"
+        material: m.foods.onion
+    effects:
+        - yield(6)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(ia.playbox_custom_crops:onion_seeds,10)
+        - add_drop(ia.playbox_custom_crops:garlic_seeds,10)
+exotic_farm:
+    weight: 2
+    item:
+        name: "§fExotic Farm"
+        material: m.ingredients.rice
+    effects:
+        - yield(6)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(ia.playbox_custom_crops:rice_seeds,10)
+        - add_drop(ia.playbox_custom_crops:mustard_seeds,10)
+        - add_drop(ia.playbox_custom_crops:olive_seeds,10)
+yeast_production:
+    weight: 3
+    item:
+        name: "§fYeast Production"
+        material: m.ingredients.yeast
+    effects:
+        - yield(6)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(ia.playbox_custom_crops:yeast_seeds,10)
+fruit_orchard:
+    weight: 4
+    prerequisite: basic_farm_irrigation
+    item:
+        name: "§fFruit Orchard"
+        material: v.apple
+    effects:
+        - yield(6)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(ia.playbox_custom_crops:apple_seeds,10)
+        - add_drop(ia.playbox_custom_crops:plum_seeds,10)
+        - add_drop(ia.playbox_custom_crops:grape_seeds,10)
+        - add_drop(ia.playbox_custom_crops:strawberry_seeds,10)
+        - add_drop(ia.playbox_custom_crops:peach_seeds,10)
+        - add_drop(ia.playbox_custom_crops:pistachio_seeds,10)
+        - add_drop(ia.playbox_custom_crops:tomato_seeds,10)
+exotic_fruit_orchard:
+    weight: 5
+    prerequisite: basic_farm_irrigation
+    item:
+        name: "§fExotic Fruit Orchard"
+        material: m.foods.orange
+    effects:
+        - yield(6)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(ia.playbox_custom_crops:orange_seeds,10)
+        - add_drop(ia.playbox_custom_crops:lemon_seeds,10)
+        - add_drop(ia.playbox_custom_crops:lime_seeds,10)
+        - add_drop(ia.playbox_custom_crops:cherry_seeds,10)
+        - add_drop(ia.playbox_custom_crops:pineapple_seeds,10)
+        - add_drop(ia.playbox_custom_crops:banana_seeds,10)
+        - add_drop(ia.playbox_custom_crops:cactusfruit_seeds,10)
+        
+#plantation focus
+material_plantation:
+    weight: 0
+    item:
+        name: "§fMaterial Plantation"
+        material: ia.iasurvival:tobacco
+    effects:
+        - yield(20)
+        - prestige(8)
+        - time_modifier(-50)
+        - upkeep(5)
+        - add_drop(ia.iasurvival:tobacco,50)
+        - add_drop(v.sugar,50)
+spice_plantation:
+    weight: 1
+    prerequisite: basic_farm_irrigation
+    item:
+        name: "§fSpice Plantation"
+        material: m.ingredients.spice_leaf
+    effects:
+        - yield(4)
+        - prestige(4)
+        - upkeep(10)
+        - add_drop(v.sugar,40)
+        - add_drop(ia.playbox_custom_crops:spiceleaf_seeds,20)
+        - add_drop(ia.playbox_custom_crops:basil_seeds,20)
+        - add_drop(ia.playbox_custom_crops:blackpepper_seeds,20)
+sweet_spice_plantation:
+    weight: 2
+    prerequisite: basic_farm_irrigation
+    item:
+        name: "§fSweet Spice Plantation"
+        material: m.ingredients.vanilla
+    effects:
+        - yield(4)
+        - prestige(4)
+        - upkeep(10)
+        - add_drop(v.sugar,40)
+        - add_drop(ia.playbox_custom_crops:vanilla_seeds,20)
+        - add_drop(ia.playbox_custom_crops:cinnamon_seeds,20)
+        - add_drop(ia.playbox_custom_crops:nut_seeds,20)
+
+#wood focus
+wood_focus:
+    weight: 0
+    item:
+        name: "§fLog Production"
+        material: v.oak_log
+    effects:
+        - yield(40)
+        - prestige(2)
+        - upkeep(2)
+        - add_drop(v.oak_log,10)
+        - add_drop(v.spruce_log,10)
+        - add_drop(v.birch_log,10)
+        - add_drop(v.jungle_log,10)
+        - add_drop(v.acacia_log,10)
+        - add_drop(v.dark_oak_log,10)
+        - add_drop(v.mangrove_log,10)
+        - add_drop(v.cherry_log,10)
+        - add_drop(v.pale_oak_log,10)
+        - add_drop(m.materials.bark,10)
+flower_focus:
+    weight: 1
+    item:
+        name: "§fFlower Production"
+        material: v.poppy
+    effects:
+        - yield(10)
+        - prestige(2)
+        - upkeep(2)
+        - add_drop(v.dandelion,5)
+        - add_drop(v.poppy,5)
+        - add_drop(v.blue_orchid,5)
+        - add_drop(v.allium,5)
+        - add_drop(v.azure_bluet,5)
+        - add_drop(v.oxeye_daisy,5)
+        - add_drop(v.mangrove_log,5)
+        - add_drop(v.cornflower,5)
+        - add_drop(v.lily_of_the_valley,5)
+        - add_drop(v.red_tulip,5)
+        - add_drop(v.orange_tulip,5)
+        - add_drop(v.white_tulip,5)
+        - add_drop(v.pink_tulip,5)
+        - add_drop(v.whiter_rose,5)
+        - add_drop(v.sunflower,5)
+        - add_drop(v.lilac,5)
+        - add_drop(v.rose_bush,5)
+        - add_drop(v.peony,5)
+        - add_drop(v.torchflower,5)
+        - add_drop(v.pitcher_plant,5)
+rare_wood_focus:
+    weight: 1
+    prerequisite: diamond_axes
+    item:
+        name: "§fRare Wood Production"
+        material: m.materials.valewood
+    effects:
+        - yield(4)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(m.materials.valewood,10)
+        - add_drop(m.materials.runebark,10)
+        - add_drop(m.materials.amberpine,10)
+        - add_drop(m.materials.goldmaple,10)
+        - add_drop(m.materials.silk,10)
+
+#quarry focus
+stone_focus:
+    weight: 0
+    item:
+        name: "§fStone Quarry"
+        material: v.stone
+    effects:
+        - yield(20)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(m.ingredients.salt,50)
+        - add_drop(v.stone,10)
+        - add_drop(v.granite,10)
+        - add_drop(v.diorite,10)
+        - add_drop(v.andesite,10)
+        - add_drop(v.deepslate,5)
+        - add_drop(v.gravel,5)
+clay_focus:
+    weight: 1
+    item:
+        name: "§fClay Quarry"
+        material: v.clay_ball
+    effects:
+        - yield(20)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(m.ingredients.salt,50)
+        - add_drop(v.clay_ball,40)
+        - add_drop(v.mud,10)
+sandstone_focus:
+    weight: 2
+    item:
+        name: "§fSandstone Quarry"
+        material: v.sandstone
+    effects:
+        - yield(20)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(m.ingredients.salt,50)
+        - add_drop(v.sandstone,40)
+        - add_drop(v.sand,10)
+volcanic_focus:
+    weight: 3
+    item:
+        name: "§fVolcanic Quarry"
+        material: v.basalt
+    effects:
+        - yield(20)
+        - prestige(2)
+        - upkeep(5)
+        - add_drop(m.ingredients.salt,50)
+        - add_drop(v.blackstone,20)
+        - add_drop(v.basalt,10)
+        - add_drop(v.netherrack,10)
+        - add_drop(v.obsidian,5)
+        - add_drop(v.crying_obsidian,5)
+        
 #tools
 stone_tools:
     weight: 0
-	item:
-        name: "�fStone Tools"
+    item:
+        name: "§fStone Tools"
         material: v.stone_pickaxe
     effects:
         - time_modifier(150)
+        - add_drop(nothing,50)
     cost:
-        - v.cobblestone.10
-        - v.stick.4
+        - v.cobblestone(2)
+        - v.stick(2)
+iron_tools:
+    weight: 1
+    item:
+        name: "§fIron Tools"
+        material: v.iron_pickaxe
+    effects:
+        - time_modifier(50)
+        - add_drop(nothing,25)
+    cost:
+        - v.iron_ingot(2)
+        - v.stick(2)
+diamond_tools:
+    weight: 2
+    item:
+        name: "§fDiamond Tools"
+        material: v.iron_pickaxe
+        model_data: 4
+    effects:
+        - time_modifier(10)
+    cost:
+        - v.diamond(2)
+        - v.stick(2)
+steel_tools:
+    weight: 3
+    item:
+        name: "§7Steel Tools"
+        material: m.tools.steel_pickaxe
+    effects:
+        - prestige(20)
+        - yield(1)
+        - time_modifier(-10)
+    cost:
+        - m.materials.steel_ingot(2)
+        - v.stick(2)
+abyssalite_tools:
+    weight: 4
+    item:
+        name: "§8Abyssalite Tools"
+        material: m.tools.abyssalite_pickaxe
+    effects:
+        - prestige(40)
+        - yield(2)
+        - time_modifier(-30)
+        - upkeep(2)
+    cost:
+        - m.materials.abyssalite_ingot(1)
+        - m.materials.refined_maplewood(1)
+mythril_tools:
+    weight: 5
+    item:
+        name: "§3Mythril Tools"
+        material: m.tools.mythril_pickaxe
+    effects:
+        - prestige(80)
+        - yield(3)
+        - time_modifier(-50)
+        - upkeep(4)
+    cost:
+        - m.materials.mythril_ingot(1)
+        - m.materials.refined_elderwood(1)
+        
+#tools_shovel
+stone_shovels:
+    weight: 0
+    item:
+        name: "§fStone Shovels"
+        material: v.stone_shovel
+    effects:
+        - time_modifier(150)
+        - add_drop(nothing,50)
+    cost:
+        - v.cobblestone(2)
+        - v.stick(2)
+iron_shovels:
+    weight: 1
+    item:
+        name: "§fIron Shovels"
+        material: v.iron_shovel
+    effects:
+        - time_modifier(50)
+        - add_drop(nothing,25)
+    cost:
+        - v.iron_ingot(2)
+        - v.stick(2)
+diamond_shovels:
+    weight: 2
+    item:
+        name: "§fDiamond Shovels"
+        material: v.iron_shovel
+        model_data: 25
+    effects:
+        - time_modifier(10)
+    cost:
+        - v.diamond(2)
+        - v.stick(2)
+steel_shovels:
+    weight: 3
+    item:
+        name: "§7Steel Shovels"
+        material: m.tools.steel_shovel
+    effects:
+        - prestige(20)
+        - yield(1)
+        - time_modifier(-10)
+    cost:
+        - m.materials.steel_ingot(2)
+        - v.stick(2)
+abyssalite_shovels:
+    weight: 4
+    item:
+        name: "§8Abyssalite Shovels"
+        material: m.tools.abyssalite_shovel
+    effects:
+        - prestige(40)
+        - yield(2)
+        - time_modifier(-30)
+        - upkeep(2)
+    cost:
+        - m.materials.abyssalite_ingot(1)
+        - m.materials.refined_maplewood(1)
+mythril_shovels:
+    weight: 5
+    item:
+        name: "§3Mythril Shovels"
+        material: m.tools.mythril_shovel
+    effects:
+        - prestige(80)
+        - yield(3)
+        - time_modifier(-50)
+        - upkeep(4)
+    cost:
+        - m.materials.mythril_ingot(1)
+        - m.materials.refined_elderwood(1)
+        
+#tools_forestry
+stone_axes:
+    weight: 0
+    item:
+        name: "§fStone Axes"
+        material: v.stone_axe
+    effects:
+        - time_modifier(150)
+        - add_drop(nothing,50)
+    cost:
+        - v.cobblestone(2)
+        - v.stick(2)
+iron_axes:
+    weight: 1
+    item:
+        name: "§fIron Axes"
+        material: v.iron_axe
+    effects:
+        - time_modifier(50)
+        - add_drop(nothing,25)
+    cost:
+        - v.iron_ingot(2)
+        - v.stick(2)
+diamond_axes:
+    weight: 2
+    item:
+        name: "§fDiamond Axes"
+        material: v.iron_axe
+        model_data: 18
+    effects:
+        - time_modifier(10)
+    cost:
+        - v.diamond(2)
+        - v.stick(2)
+steel_axes:
+    weight: 3
+    item:
+        name: "§7Steel Axes"
+        material: m.tools.steel_axe
+    effects:
+        - prestige(20)
+        - yield(1)
+        - time_modifier(-10)
+    cost:
+        - m.materials.steel_ingot(2)
+        - v.stick(2)
+abyssalite_axes:
+    weight: 4
+    item:
+        name: "§8Abyssalite Axes"
+        material: m.tools.abyssalite_axe
+    effects:
+        - prestige(40)
+        - yield(2)
+        - time_modifier(-30)
+        - upkeep(2)
+    cost:
+        - m.materials.abyssalite_ingot(1)
+        - m.materials.refined_maplewood(1)
+mythril_axes:
+    weight: 5
+    item:
+        name: "§3Mythril Axes"
+        material: m.tools.mythril_axe
+    effects:
+        - prestige(80)
+        - yield(3)
+        - time_modifier(-50)
+        - upkeep(4)
+    cost:
+        - m.materials.mythril_ingot(1)
+        - m.materials.refined_elderwood(1)
+        
+#tools_hoes
+stone_hoes:
+    weight: 0
+    item:
+        name: "§fStone Hoes"
+        material: v.stone_hoe
+    effects:
+        - time_modifier(150)
+        - add_drop(nothing,50)
+    cost:
+        - v.cobblestone(2)
+        - v.stick(2)
+iron_hoes:
+    weight: 1
+    item:
+        name: "§fIron Hoes"
+        material: v.iron_hoe
+    effects:
+        - time_modifier(50)
+        - add_drop(nothing,25)
+    cost:
+        - v.iron_ingot(2)
+        - v.stick(2)
+diamond_hoes:
+    weight: 2
+    item:
+        name: "§fDiamond Hoes"
+        material: v.iron_hoe
+        model_data: 23
+    effects:
+        - time_modifier(10)
+    cost:
+        - v.diamond(2)
+        - v.stick(2)
+steel_hoes:
+    weight: 3
+    item:
+        name: "§7Steel Hoes"
+        material: m.tools.steel_hoe
+    effects:
+        - prestige(20)
+        - yield(1)
+        - time_modifier(-10)
+    cost:
+        - m.materials.steel_ingot(2)
+        - v.stick(2)
+abyssalite_hoes:
+    weight: 4
+    item:
+        name: "§8Abyssalite Hoes"
+        material: m.tools.abyssalite_hoe
+    effects:
+        - prestige(40)
+        - yield(2)
+        - time_modifier(-30)
+        - upkeep(2)
+    cost:
+        - m.materials.abyssalite_ingot(1)
+        - m.materials.refined_maplewood(1)
+mythril_hoes:
+    weight: 5
+    item:
+        name: "§3Mythril Hoes"
+        material: m.tools.mythril_hoe
+    effects:
+        - prestige(80)
+        - yield(3)
+        - time_modifier(-50)
+        - upkeep(4)
+    cost:
+        - m.materials.mythril_ingot(1)
+        - m.materials.refined_elderwood(1)
+
+#explosives
+no_explosives:
+    weight: 0
+    item:
+        name: "§fNo Explosives"
+        material: v.barrier
+    effects:
+        - time_modifier(20)
+basic_explosives:
+    weight: 1
+    item:
+        name: "§fBasic Explosives"
+        material: v.gunpowder
+    effects:
+        - prestige(4)
+        - upkeep(1)
+    cost:
+        - v.gunpowder(1)
+dynamite:
+    weight: 2
+    item:
+        name: "§fDynamite"
+        material: m.materials.dynamite
+    effects:
+        - prestige(8)
+        - time_modifier(-10)
+        - upkeep(2)
+    cost:
+        - m.materials.dynamite(1)
+arcane_mining:
+    weight: 3
+    item:
+        name: "§dArcane Mining"
+        material: m.materials.iron_core
+    effects:
+        - prestige(16)
+        - time_modifier(-20)
+        - upkeep(4)
+    cost:
+        - m.materials.dynamite(1)
+        - m.materials.arcane_crystal(2)
+
+#refinery
+no_refinery:
+    weight: 0
+    item:
+        name: "§fNo Refinery"
+        material: v.barrier
+    effects:
+        - time_modifier(80)
+basic_refinery:
+    weight: 1
+    item:
+        name: "§fBasic Refinery"
+        material: v.campfire
+    effects:
+        - prestige(2)
+        - time_modifier(40)
+    cost:
+        - v.coal(2)
+advanced_refinery:
+    weight: 2
+    item:
+        name: "§fAdvanced Refinery"
+        material: v.furnace
+    effects:
+        - prestige(4)
+        - time_modifier(20)
+        - upkeep(1)
+    cost:
+        - v.coal(4)
+industrial_refinery:
+    weight: 3
+    item:
+        name: "§fIndustrial Refinery"
+        material: v.blast_furnace
+    effects:
+        - prestige(8)
+        - upkeep(2)
+    cost:
+        - v.coal(8)
+arcane_refinery:
+    weight: 4
+    item:
+        name: "§dArcane Refinery"
+        material: v.crying_obsidian
+    effects:
+        - prestige(16)
+        - time_modifier(-10)
+        - upkeep(4)
+    cost:
+        - v.coal(8)
+        - m.materials.arcane_crystal(2)
+
+#lights
+no_light:
+    weight: 0
+    item:
+        name: "§fNo Lights"
+        material: v.barrier
+    effects:
+        - time_modifier(20)
+torches:
+    weight: 1
+    item:
+        name: "§fTorches"
+        material: v.torch
+    effects:
+        - prestige(2)
+        - time_modifier(10)
+        - upkeep(2)
+    cost:
+        - v.coal(2)
+lanterns:
+    weight: 2
+    item:
+        name: "§fLanterns"
+        material: v.lantern
+    effects:
+        - prestige(4)
+        - upkeep(4)
+    cost:
+        - v.coal(4)
+        - v.iron_ingot(2)
+        
+#fertilizer
+no_fertilizer:
+    weight: 0
+    item:
+        name: "§fNo Fertilizer"
+        material: v.barrier
+    effects:
+        - time_modifier(20)
+basic_fertilizer:
+    weight: 1
+    item:
+        name: "§fBasic Fertilizer"
+        material: v.bone_meal
+    effects:
+        - prestige(2)
+        - time_modifier(10)
+        - upkeep(2)
+    cost:
+        - v.bone_meal(4)
+advanced_fertilizer:
+    weight: 2
+    prerequisite: basic_farm_irrigation
+    item:
+        name: "§fAdvanced Fertilizer"
+        material: m.materials.fertilizer
+    effects:
+        - prestige(4)
+        - upkeep(4)
+    cost:
+        - m.materials.fertilizer(2)
+        
+#forestry_irrigation
+no_forestry_irrigation:
+    weight: 0
+    item:
+        name: "§fNo Forestry Irrigation"
+        material: v.barrier
+    effects:
+        - time_modifier(80)
+basic_forestry_irrigation:
+    weight: 1
+    item:
+        name: "§fBasic Forestry Irrigation"
+        material: m.ingredients.cup_of_water
+    effects:
+        - prestige(2)
+        - time_modifier(40)
+    cost:
+        - m.ingredients.cup_of_water(4)
+steam_powered_forestry_irrigation:
+    weight: 2
+    prerequisite: iron_axes
+    item:
+        name: "§fSteam Powered Forestry Irrigation"
+        material: v.water_bucket
+    effects:
+        - prestige(8)
+        - upkeep(2)
+    cost:
+        - m.ingredients.cup_of_water(4)
+        - v.coal(8)
+arcane_forestry_irrigation:
+    weight: 3
+    prerequisite: diamond_axes
+    item:
+        name: "§dArcane Forestry Irrigation"
+        material: m.materials.arcane_crystal
+    effects:
+        - prestige(16)
+        - time_modifier(-10)
+        - upkeep(4)
+    cost:
+        - m.ingredients.cup_of_water(4)
+        - m.materials.arcane_crystal(2)
+        - v.coal(8)
+        
+#irrigation
+no_farm_irrigation:
+    weight: 0
+    item:
+        name: "§fNo Farm Irrigation"
+        material: v.barrier
+    effects:
+        - time_modifier(80)
+basic_farm_irrigation:
+    weight: 1
+    item:
+        name: "§fBasic Farm Irrigation"
+        material: m.ingredients.cup_of_water
+    effects:
+        - prestige(2)
+        - time_modifier(40)
+    cost:
+        - m.ingredients.cup_of_water(4)
+steam_powered_farm_irrigation:
+    weight: 2
+    prerequisite: iron_hoes
+    item:
+        name: "§fSteam Powered Farm Irrigation"
+        material: v.water_bucket
+    effects:
+        - prestige(8)
+        - upkeep(2)
+    cost:
+        - m.ingredients.cup_of_water(4)
+        - v.coal(8)
+arcane_farm_irrigation:
+    weight: 3
+    prerequisite: diamond_hoes
+    item:
+        name: "§dArcane Farm Irrigation"
+        material: m.materials.arcane_crystal
+    effects:
+        - prestige(16)
+        - time_modifier(-10)
+        - upkeep(4)
+    cost:
+        - m.ingredients.cup_of_water(4)
+        - m.materials.arcane_crystal(2)
+        - v.coal(8)
+        
+#royal mine focus
+prologue_1:
+    weight: 1
+    prerequisite: iron_tools
+    item:
+        name: "§7Ignitium Production"
+        material: m.materials.ignitium
+    effects:
+        - prestige(10)
+        - add_drop(m.materials.ignitium,100)
+act1_1:
+    weight: 1
+    prerequisite: diamond_tools
+    item:
+        name: "§7Abyssalite Fragment Production"
+        material: m.materials.abyssalite_fragment
+    effects:
+        - prestige(10)
+        - add_drop(m.materials.raw_tin,50)
+        - add_drop(m.materials.abyssalite_fragment,50)
+act1_2:
+    weight: 2
+    prerequisite: iron_tools
+    item:
+        name: "§7Improved Ignitium Production"
+        material: m.materials.ignitium
+    effects:
+        - prestige(10)
+        - yield(4)
+        - add_drop(m.materials.ignitium,100)
+act2_1:
+    weight: 1
+    prerequisite: steel_tools
+    item:
+        name: "§7Mythril Fragment Production"
+        material: m.materials.mythril_fragment
+    effects:
+        - prestige(50)
+        #- add_drop(m.materials.mythril_fragment,70)
+        #- add_drop(m.materials.mythrilite,30)
+act2_2:
+    weight: 2
+    prerequisite: iron_tools
+    item:
+        name: "§7Improved Ignitium Production"
+        material: m.materials.ignitium
+    effects:
+        - prestige(10)
+        - yield(10)
+        #- add_drop(m.materials.ignitium,100)
+act2_3:
+    weight: 3
+    prerequisite: diamond_tools
+    item:
+        name: "§7Improved Abyssalite Fragment Production"
+        material: m.materials.abyssalite_fragment
+    effects:
+        - prestige(10)
+        - yield(10)
+        #- add_drop(m.materials.raw_tin,50)
+        #- add_drop(m.materials.abyssalite_fragment,50)
+act3_1:
+    weight: 1
+    prerequisite: abyssalite_tools
+    item:
+        name: "§7Mythrilite Production"
+        material: m.materials.mythrilite
+    effects:
+        - prestige(0)
+        - add_drop(nothing,100)
