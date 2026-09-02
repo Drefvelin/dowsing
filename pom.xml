@@ -59,10 +59,10 @@
         </dependency>
         <dependency>
             <groupId>local</groupId>
-            <artifactId>LoneLibs</artifactId>
-            <version>3.5.0</version>
+            <artifactId>ItemsAdder</artifactId>
+            <version>4.0.18</version>
             <scope>system</scope>
-            <systemPath>D:/Dokumenter/My Plugins/Reference Libs/ItemsAdder_3.5.0-r2.jar</systemPath>
+            <systemPath>D:/Dokumenter/My Plugins/Reference Libs/ItemsAdder_4.0.18.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>local</groupId>

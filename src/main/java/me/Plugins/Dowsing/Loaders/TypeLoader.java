@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -44,8 +45,12 @@ public class TypeLoader {
 		List<String> list = new ArrayList<String>(set);
 		
 		for(String key : list) {
-			NodeType o = new NodeType(key, config.getConfigurationSection(key));
-			oList.add(o);
+			try {
+				NodeType o = new NodeType(key, config.getConfigurationSection(key));
+				oList.add(o);
+			} catch (Exception e) {
+				Bukkit.getLogger().warning("[Dowsing] Failed to load node type '" + key + "': " + e.getMessage());
+			}
 		}
 	}
 }

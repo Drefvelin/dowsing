@@ -619,16 +619,17 @@ public class Node {
 		if(type.equalsIgnoreCase("v")) {
 			this.loc.getBlock().setType(Material.AIR);
 		} else if(type.equalsIgnoreCase("ia")) {
-			List<Entity> nearbyEntities = (List<Entity>) this.loc.getWorld().getNearbyEntities(this.loc, 0.2, 0.2, 0.2);
-			for(Entity a : this.loc.getWorld().getEntities()){
-	            if(nearbyEntities.contains(a)){
-	            	CustomFurniture f = CustomFurniture.byAlreadySpawned(a);
-	                if(f != null) {
-	                	a.remove();
-	                	this.loc.getBlock().setType(Material.AIR);
-	                }
-	            }
-	        }
+			Location center = this.loc.clone().add(0.5, 0.5, 0.5);
+			for(Entity a : this.loc.getWorld().getNearbyEntities(center, 1.5, 1.5, 1.5)) {
+				CustomFurniture f = CustomFurniture.byAlreadySpawned(a);
+				if(f != null) {
+					f.remove(false);
+					break;
+				}
+			}
+			if(this.loc.getBlock().getType() != Material.AIR) {
+				this.loc.getBlock().setType(Material.AIR);
+			}
 		}
 		Location loc = new Location(this.getLoc().getWorld(), this.getLoc().getX(), this.getLoc().getY(), this.getLoc().getZ());
 		loc.add(0.5,0,0.5);

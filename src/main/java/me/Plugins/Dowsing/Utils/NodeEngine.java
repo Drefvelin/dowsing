@@ -103,6 +103,9 @@ public class NodeEngine {
 	public void addItem(String path, Integer amount, Inventory i) {
 		ItemCreator ic = new ItemCreator();
 		ItemStack item = ic.getItemFromPath(path);
+		if (item == null) {
+			return;
+		}
 		item.setAmount(amount);
 		i.addItem(item);
 	}

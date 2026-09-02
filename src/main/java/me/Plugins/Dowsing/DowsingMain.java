@@ -17,6 +17,7 @@ import me.Plugins.Dowsing.Managers.NodeManager;
 import me.Plugins.Dowsing.Managers.ResourceManager;
 import me.Plugins.Dowsing.Objects.Node;
 import me.Plugins.Dowsing.Utils.Database;
+import me.Plugins.Dowsing.Utils.ItemCreator;
 import me.Plugins.Dowsing.Utils.TabCompletion;
 
 public class DowsingMain extends JavaPlugin{
@@ -100,6 +101,7 @@ public class DowsingMain extends JavaPlugin{
 	}
 	public void reloadConfigCommand() {
 		nodeManager.cacheNodes();
+		ItemCreator.clearInvalidPathWarnings();
 		BlockLoader.clear();
 		TypeLoader.clear();
 		PMLoader.clear();

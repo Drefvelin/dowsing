@@ -295,7 +295,7 @@ flower_focus:
         - add_drop(v.orange_tulip,5)
         - add_drop(v.white_tulip,5)
         - add_drop(v.pink_tulip,5)
-        - add_drop(v.whiter_rose,5)
+        - add_drop(v.wither_rose,5)
         - add_drop(v.sunflower,5)
         - add_drop(v.lilac,5)
         - add_drop(v.rose_bush,5)

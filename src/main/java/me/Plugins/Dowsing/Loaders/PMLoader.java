@@ -49,8 +49,12 @@ public class PMLoader {
 		List<String> list = new ArrayList<String>(set);
 		
 		for(String key : list) {
-			ProductionMethod pm = new ProductionMethod(key, config.getConfigurationSection(key));
-			pms.add(pm);
+			try {
+				ProductionMethod pm = new ProductionMethod(key, config.getConfigurationSection(key));
+				pms.add(pm);
+			} catch (Exception e) {
+				Bukkit.getLogger().warning("[Dowsing] Failed to load production method '" + key + "': " + e.getMessage());
+			}
 		}
 	}
 }

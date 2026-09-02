@@ -13,6 +13,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -25,8 +26,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.lone.itemsadder.api.CustomFurniture;
-import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
+import dev.lone.itemsadder.api.Events.FurniturePrePlaceEvent;
 import me.Plugins.Dowsing.Cache;
 import me.Plugins.Dowsing.DowsingMain;
 import me.Plugins.Dowsing.Loaders.BlockLoader;
@@ -209,25 +210,32 @@ public class NodeManager implements Listener{
 			currentNode.put(p, n);
 		}
 	}
-	@EventHandler
-	public void placeNode(BlockPlaceEvent e) {
-		if(getByLocation(e.getBlock().getLocation()) != null) return;
-		Player p = e.getPlayer();
-		String type = "none";
-		ItemStack i = p.getInventory().getItemInMainHand();
-		CustomStack fur = CustomStack.byItemStack(i);
-		if(fur != null) {
-			if(BlockLoader.getByPath(fur.getNamespacedID()) != null) type = "furniture";
-		} else if(BlockLoader.getByBlock(e.getBlock().getType()) != null) type = "block";
-		NodeBlock b = null;
-		if(type.equalsIgnoreCase("furniture")) {
-			b = BlockLoader.getByPath(fur.getNamespacedID());
-		} else if(type.equalsIgnoreCase("block")) {
-			b = BlockLoader.getByBlock(e.getBlock().getType());
-		}
+	@EventHandler(ignoreCancelled = true)
+	public void placeVanillaNode(BlockPlaceEvent e) {
+		NodeBlock b = BlockLoader.getByBlock(e.getBlock().getType());
 		if(b == null) return;
+		tryCreateNode(e.getPlayer(), e.getBlock().getLocation(), b, e);
+	}
+	@EventHandler(ignoreCancelled = true)
+	public void placeFurnitureNode(FurniturePrePlaceEvent e) {
+		if(e.getNamespacedID() == null) return;
+		NodeBlock b = BlockLoader.getByPath(e.getNamespacedID());
+		if(b == null) return;
+		if(e.getLocation() == null) return;
+		Location loc = e.getLocation().getBlock().getLocation();
+		tryCreateNode(e.getPlayer(), loc, b, e);
+	}
+	private void tryCreateNode(Player p, Location loc, NodeBlock b, Cancellable e) {
+		if(p == null || loc == null || b == null) {
+			e.setCancelled(true);
+			return;
+		}
+		if(getByLocation(loc) != null) {
+			e.setCancelled(true);
+			return;
+		}
 		for(Node node : nodes) {
-			if(node.getLoc().getChunk().equals(e.getBlock().getChunk())) {
+			if(node.getLoc().getChunk().equals(loc.getChunk())) {
 				p.sendMessage("§cChunk already has a node!");
 				e.setCancelled(true);
 				return;
@@ -249,35 +257,39 @@ public class NodeManager implements Listener{
 			e.setCancelled(true);
 			return;
 		}
-		Node n = new Node(e.getBlock().getLocation(), g, b);
+		Node n = new Node(loc, g, b);
 		p.sendMessage("Node created");
 		p.getLocation().getWorld().playSound(n.getLoc(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 		nodes.add(n);
 		n.activate();
 		n.update();
 	}
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void breakFurnitureNode(FurnitureBreakEvent e) {
-		if(BlockLoader.getByPath(e.getFurniture().getNamespacedID()) == null) return;
-		for(Node n : nodes) {
-			if(n.getLoc().getWorld().equals(e.getFurniture().getArmorstand().getLocation().getWorld())) {
-				if(n.getLoc().distance(e.getFurniture().getArmorstand().getLocation()) < 1.5) {
-					e.setCancelled(true);
-				}
-			}
+		if(e.getNamespacedID() == null || BlockLoader.getByPath(e.getNamespacedID()) == null) return;
+		Location loc = furnitureBlockLocation(e.getBukkitEntity());
+		if(loc == null) return;
+		if(getByLocation(loc) != null) {
+			e.setCancelled(true);
 		}
 	}
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	public void breakNode(BlockBreakEvent e) {
-		if(BlockLoader.getByBlock(e.getBlock().getType()) == null) return;
-		for(Node n : nodes) {
-			if(n.getLoc().equals(e.getBlock().getLocation())) {
-				e.setCancelled(true);
-			}
-		}
+		if(getByLocation(e.getBlock().getLocation()) == null) return;
+		e.setCancelled(true);
 	}
-	@EventHandler
+	private Location furnitureBlockLocation(Entity entity) {
+		if(entity == null) return null;
+		return entity.getLocation().getBlock().getLocation();
+	}
+	@EventHandler(ignoreCancelled = true)
 	public void openNode(PlayerInteractEvent e) {
+		if(e.getClickedBlock() == null) return;
+		if(e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+			if(getByLocation(e.getClickedBlock().getLocation()) == null) return;
+			e.setCancelled(true);
+			return;
+		}
 		if(!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 		Player p = e.getPlayer();
 		if(getByLocation(e.getClickedBlock().getLocation()) == null) return;

@@ -1,9 +1,12 @@
 package me.Plugins.Dowsing.Utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -19,11 +22,24 @@ import me.Plugins.TLibs.TLibs;
 import me.Plugins.TLibs.Objects.API.SubAPI.StringFormatter;
 
 public class ItemCreator {
+	private static final Set<String> loggedInvalidPaths = new HashSet<>();
+
+	public static void clearInvalidPathWarnings() {
+		loggedInvalidPaths.clear();
+	}
+
 	public ItemStack getItemFromPath(String s) {
 		if (s == null || s.isBlank()) {
 			return null;
 		}
-		return TLibs.getItemAPI().getCreator().getItemFromPath(s);
+		try {
+			return TLibs.getItemAPI().getCreator().getItemFromPath(s);
+		} catch (RuntimeException e) {
+			if (loggedInvalidPaths.add(s)) {
+				Bukkit.getLogger().warning("[Dowsing] Invalid item path: " + s + " (" + e.getMessage() + ")");
+			}
+			return null;
+		}
 	}
 	@SuppressWarnings("deprecation")
 	public ItemStack createMenuItem(ConfigurationSection config, List<String> effects, List<String> cost, String prerequisite) {
