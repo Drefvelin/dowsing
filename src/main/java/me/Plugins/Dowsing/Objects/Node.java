@@ -330,6 +330,7 @@ public class Node {
 			p.closeInventory();
 		}
 		guild = null;
+		NodeManager.requestNodeBenefitSync();
 	}
 
 	public void tick() {
@@ -439,6 +440,7 @@ public class Node {
 		this.timeLeft = this.modifiedTime;
 		this.cycleTime = 0;
 		ng.takeInputs(this);
+		NodeManager.requestNodeBenefitSync();
 	}
 	public void deActivate() {
 		this.isActive = false;
@@ -448,6 +450,7 @@ public class Node {
 				refund();
 			}
 		}
+		NodeManager.requestNodeBenefitSync();
 	}
 
 	public void growEfficiency() {
@@ -486,6 +489,7 @@ public class Node {
 		this.extraction = 0;
 		this.naturalYield = 0;
 		this.upkeep = 0.0;
+		this.prestigeGain = 0.0;
 		try {
 			this.naturalYield = getNaturalYieldFromChunk(this.currentType.getResource(), this.loc);
 		} catch (IOException e) {
@@ -595,6 +599,8 @@ public class Node {
 			extraction = extraction+Integer.parseInt(e.split("\\(")[1].replace(")", ""));
 		} else if(type.equalsIgnoreCase("upkeep")) {
 			upkeep = upkeep+Double.parseDouble(e.split("\\(")[1].replace(")", ""));
+		} else if(type.equalsIgnoreCase("prestige")) {
+			prestigeGain = prestigeGain+getAddedPrestige(e);
 		}
 	}
 	public Integer getNaturalYieldFromChunk(String resource, Location l) throws IOException {
@@ -636,5 +642,6 @@ public class Node {
 		ItemDropper dropper = new ItemDropper();
 		dropper.dropItem(loc, path, false);
 		loc.getWorld().playSound(loc, Sound.ENTITY_GLOW_ITEM_FRAME_REMOVE_ITEM, 0.5f, 1f);
+		NodeManager.requestNodeBenefitSync();
 	}
 }

@@ -3,6 +3,7 @@ package me.Plugins.Dowsing.Managers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
-import dev.lone.itemsadder.api.Events.FurniturePrePlaceEvent;
+import dev.lone.itemsadder.api.Events.FurniturePlaceSuccessEvent;
 import me.Plugins.Dowsing.Cache;
 import me.Plugins.Dowsing.DowsingMain;
 import me.Plugins.Dowsing.Loaders.BlockLoader;
@@ -45,6 +46,8 @@ import me.Plugins.Dowsing.Utils.NodeReloader;
 import me.Plugins.Dowsing.enums.ConfirmType;
 import me.Plugins.SimpleFactions.Guild.Guild;
 import me.Plugins.SimpleFactions.Managers.FactionManager;
+import me.Plugins.SimpleFactions.Objects.Faction;
+import me.Plugins.SimpleFactions.Objects.Modifier;
 import me.Plugins.SimpleFactions.Utils.Permissions;
 
 public class NodeManager implements Listener{
@@ -55,6 +58,33 @@ public class NodeManager implements Listener{
 	public HashMap<Player, ConfirmType> confirm = new HashMap<>();
 	public HashMap<Location, NodeReloader> cached = new HashMap<>();
 	public static HashMap<String, Integer> extraCapacityByGuild = new HashMap<>();
+
+	public static void requestNodeBenefitSync() {
+		syncFactionNodeBenefits();
+	}
+
+	public static void syncFactionNodeBenefits() {
+		Map<Faction, Double> prestigeByFaction = new HashMap<>();
+		Map<Faction, Double> wealthByFaction = new HashMap<>();
+		for(Node n : nodes) {
+			if(!n.hasGuild() || !Boolean.TRUE.equals(n.getIsActive())) continue;
+			Guild g = n.getGuild();
+			if(g == null) continue;
+			Faction f = g.getFaction();
+			if(f == null) continue;
+			prestigeByFaction.merge(f, n.getPrestigeGain(), Double::sum);
+			wealthByFaction.merge(f, n.getWealthModifier(), Double::sum);
+		}
+		for(Faction f : FactionManager.getCopy()) {
+			double prestige = prestigeByFaction.getOrDefault(f, 0.0);
+			double wealth = wealthByFaction.getOrDefault(f, 0.0);
+			f.setPersistentPrestigeModifier("Nodes", prestige);
+			f.updatePrestige();
+			Guild mainGuild = f.getOrCreateMainGuild();
+			mainGuild.addWealthModifier(new Modifier("Nodes", wealth, true));
+			mainGuild.updateWealth();
+		}
+	}
 
 	public static int getExtraCapacity(Guild g) {
 		if(g == null) return 0;
@@ -159,7 +189,7 @@ public class NodeManager implements Listener{
 				for(Node n : nodes){
 					if(n.isClaimable()){
 						Location loc = n.getLoc().clone().add(0.5, 1, 0.5);
-						loc.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, loc, 10);
+						loc.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, loc, 10);
 					} else {
 						n.check();
 					}
@@ -205,6 +235,7 @@ public class NodeManager implements Listener{
 			//n.setLevel(1);
 			n.updateEfficiency(-Cache.efficiencyLossType);
 			n.update();
+			requestNodeBenefitSync();
 			InventoryManager inv = new InventoryManager();
 			inv.nodeView(p, n);
 			currentNode.put(p, n);
@@ -217,13 +248,24 @@ public class NodeManager implements Listener{
 		tryCreateNode(e.getPlayer(), e.getBlock().getLocation(), b, e);
 	}
 	@EventHandler(ignoreCancelled = true)
-	public void placeFurnitureNode(FurniturePrePlaceEvent e) {
+	public void placeFurnitureNode(FurniturePlaceSuccessEvent e) {
 		if(e.getNamespacedID() == null) return;
 		NodeBlock b = BlockLoader.getByPath(e.getNamespacedID());
 		if(b == null) return;
-		if(e.getLocation() == null) return;
-		Location loc = e.getLocation().getBlock().getLocation();
-		tryCreateNode(e.getPlayer(), loc, b, e);
+		if(e.getBukkitEntity() == null) return;
+		Location loc = e.getBukkitEntity().getLocation().getBlock().getLocation();
+		Cancellable placement = new Cancellable() {
+			private boolean cancelled;
+			public boolean isCancelled() { return cancelled; }
+			public void setCancelled(boolean cancel) { cancelled = cancel; }
+		};
+		tryCreateNode(e.getPlayer(), loc, b, placement);
+		if(placement.isCancelled()) {
+			CustomFurniture furniture = CustomFurniture.byAlreadySpawned(e.getBukkitEntity());
+			if(furniture != null) {
+				furniture.remove(false);
+			}
+		}
 	}
 	private void tryCreateNode(Player p, Location loc, NodeBlock b, Cancellable e) {
 		if(p == null || loc == null || b == null) {
@@ -263,6 +305,7 @@ public class NodeManager implements Listener{
 		nodes.add(n);
 		n.activate();
 		n.update();
+		requestNodeBenefitSync();
 	}
 	@EventHandler(ignoreCancelled = true)
 	public void breakFurnitureNode(FurnitureBreakEvent e) {
@@ -308,6 +351,7 @@ public class NodeManager implements Listener{
 			n.setGuild(g);
 			p.getLocation().getWorld().playSound(n.getLoc(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 			n.update();
+			requestNodeBenefitSync();
 			inv.nodeView(p, n);
 			currentNode.put(p, n);
 			return;
@@ -385,6 +429,9 @@ public class NodeManager implements Listener{
 					}
 				}
 				n.update();
+				if(n.getIsActive()) {
+					requestNodeBenefitSync();
+				}
 				inv.updateNodeView(p, n, e.getClickedInventory());
 			} else if(e.getSlot() == 18) {
 				if(!(n.getBlock().isBreakable() || Permissions.isAdmin(p))) return;
@@ -401,6 +448,7 @@ public class NodeManager implements Listener{
 				n.setGuild(null);
 				p.sendMessage("§aNode set as claimable");
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
+				requestNodeBenefitSync();
 				p.closeInventory();
 			} else{
 				for(NodeSlot slot : n.getCurrentType().getSlots()) {
@@ -448,6 +496,7 @@ public class NodeManager implements Listener{
 			slot.setActivePm(pm);
 			n.updateEfficiency(-Cache.efficiencyLossPM);
 			n.update();
+			requestNodeBenefitSync();
 			inv.nodeView(p, n);
 			currentNode.put(p, n);
 		} else if(e.getView().getTitle().equalsIgnoreCase("§7"+n.getBlock().getResource()+" Node: Type")) {
@@ -541,6 +590,7 @@ public class NodeManager implements Listener{
 		n.setLevel(n.getLevel()+1);
 		InventoryManager inv = new InventoryManager();
 		n.update();
+		requestNodeBenefitSync();
 		inv.updateNodeView(p, n, i);
 	}
 	public void downgradeNode(Player p, Node n, Inventory i) {
@@ -558,6 +608,7 @@ public class NodeManager implements Listener{
 		n.setLevel(n.getLevel()-1);
 		InventoryManager inv = new InventoryManager();
 		n.update();
+		requestNodeBenefitSync();
 		inv.updateNodeView(p, n, i);
 	}
 	public void cacheNodes() {

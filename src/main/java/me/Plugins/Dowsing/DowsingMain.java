@@ -53,6 +53,7 @@ public class DowsingMain extends JavaPlugin{
 		startManagers();
 		db.loadGuildCapacity();
 		db.loadNodes();
+		NodeManager.requestNodeBenefitSync();
 		getServer().getPluginManager().registerEvents(resourceManager, plugin);
 		getServer().getPluginManager().registerEvents(nodeManager, plugin);
 		getCommand(commands.cmd1).setExecutor(commands);
@@ -108,6 +109,7 @@ public class DowsingMain extends JavaPlugin{
 		SlotLoader.clear();
 		loadConfigs();
 		nodeManager.loadCache();
+		NodeManager.requestNodeBenefitSync();
 	}
 	public void reloadConfigPCommand(Player p) {
 		p.sendMessage(ChatColor.GREEN + "[Dowsing]" + ChatColor.YELLOW + " Reloading plugin...");
