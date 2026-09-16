@@ -181,6 +181,7 @@ public class ItemCreator {
 			nLvl = cLvl;
 		}
 		Integer oldYield = 0;
+		Double oldYieldPercent = 0.0;
 		Integer oldPrestige = 0;
 		Integer oldExtraction = 0;
 		Double oldTime = 0.0;
@@ -189,6 +190,8 @@ public class ItemCreator {
 			String t = s.split("\\(")[0];
 			if(t.equalsIgnoreCase("yield")) {
 				oldYield = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
+			} else if(t.equalsIgnoreCase("yield_percent")) {
+				oldYieldPercent = Double.parseDouble(s.split("\\(")[1].replace(")", ""));
 			} else if(t.equalsIgnoreCase("time_modifier")) {
 				oldTime = Double.parseDouble(s.split("\\(")[1].replace(")", ""));
 			} else if(t.equalsIgnoreCase("prestige")) {
@@ -200,6 +203,7 @@ public class ItemCreator {
 			}
 		}
 		Integer newYield = 0;
+		Double newYieldPercent = 0.0;
 		Integer newPrestige = 0;
 		Integer newExtraction = 0;
 		Double newTime = 0.0;
@@ -208,6 +212,8 @@ public class ItemCreator {
 			String t = s.split("\\(")[0];
 			if(t.equalsIgnoreCase("yield")) {
 				newYield = Integer.parseInt(s.split("\\(")[1].replace(")", ""));
+			} else if(t.equalsIgnoreCase("yield_percent")) {
+				newYieldPercent = Double.parseDouble(s.split("\\(")[1].replace(")", ""));
 			}
 			if(t.equalsIgnoreCase("time_modifier")) {
 				newTime = Double.parseDouble(s.split("\\(")[1].replace(")", ""));
@@ -222,7 +228,16 @@ public class ItemCreator {
 		if(newPrestige > 0 || oldPrestige > 0) {
 			list.add(oldNewInteger(oldPrestige, newPrestige, "§9Prestige", false));
 		}
-		list.add(oldNewInteger(oldYield, newYield, "§eYield", false));
+		list.add(oldNewInteger(oldYield, newYield, "§eBase Yield", false));
+		if(Double.compare(newYieldPercent, 0.0) != 0 || Double.compare(oldYieldPercent, 0.0) != 0) {
+			if(Double.compare(newYieldPercent, oldYieldPercent) == 0) {
+				list.add("§eYield: §f"+formatYieldPercent(oldYieldPercent)+"%");
+			} else if(newYieldPercent > oldYieldPercent) {
+				list.add("§eYield: §a"+formatYieldPercent(oldYieldPercent)+"%->"+formatYieldPercent(newYieldPercent)+"%");
+			} else {
+				list.add("§eYield: §c"+formatYieldPercent(oldYieldPercent)+"%->"+formatYieldPercent(newYieldPercent)+"%");
+			}
+		}
 		if((newExtraction > 0 || oldExtraction > 0) && n.getNaturalYield() > 0) {
 			list.add(oldNewInteger(oldExtraction, newExtraction, "§eExtraction", false));
 		}
@@ -282,6 +297,15 @@ public class ItemCreator {
 			s = "+"+m;
 		}
 		return s;
+	}
+	String formatYieldPercent(Double m) {
+		if(m == null) {
+			return "0";
+		}
+		if(m == Math.rint(m)) {
+			return String.valueOf(m.intValue());
+		}
+		return String.valueOf(m);
 	}
 	public String formatTime(Integer time) {
 		Integer remainder = time % 60;
@@ -344,11 +368,19 @@ public class ItemCreator {
 			}
 		} else if(type.equalsIgnoreCase("yield")) {
 			Integer amount = Integer.parseInt(effect);
-			s = "§eYield: ";
+			s = "§eBase Yield: ";
 			if(amount > 0) {
 				s = s+"§a+"+amount;
 			} else {
 				s = s+"§c"+amount;
+			}
+		} else if(type.equalsIgnoreCase("yield_percent")) {
+			Double amount = Double.parseDouble(effect);
+			s = "§eYield: ";
+			if(amount > 0) {
+				s = s+"§a+"+formatYieldPercent(amount)+"%";
+			} else {
+				s = s+"§c"+formatYieldPercent(amount)+"%";
 			}
 		} else if(type.equalsIgnoreCase("prestige")) {
 			Integer amount = Integer.parseInt(effect);
