@@ -11,10 +11,11 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tfmc.refs>D:/Documents/TFMC/ReferenceLibs</tfmc.refs>
-        <tfmc.builds>D:/Documents/TFMC/Builds/Dowsing</tfmc.builds>
-        <tfmc.tlibs>D:/Documents/TFMC/Builds/TLibs</tfmc.tlibs>
-        <tfmc.magic>D:/Documents/TFMC/Builds/Magic/magic-0.1.0.jar</tfmc.magic>
+        <tfmc.refs>D:/Dokumenter/My Plugins/Reference Libs</tfmc.refs>
+        <tfmc.builds>D:/Dokumenter/My Plugins/TFMC/Dowsing</tfmc.builds>
+        <tfmc.tlibs>D:/Dokumenter/My Plugins/TFMC/TLibs</tfmc.tlibs>
+        <tfmc.sf>D:/Dokumenter/My Plugins/TFMC/SimpleFactions</tfmc.sf>
+        <tfmc.magic>D:/Dokumenter/My Plugins/TFMC/Magic/magic-0.1.0.jar</tfmc.magic>
     </properties>
 
     <dependencies>
@@ -72,7 +73,7 @@
             <artifactId>simplefactions</artifactId>
             <version>2.8.7</version>
             <scope>system</scope>
-            <systemPath>${tfmc.refs}/simplefactions-2.8.7.jar</systemPath>
+            <systemPath>${tfmc.sf}/simplefactions-2.8.7.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>local</groupId>
