@@ -19,6 +19,7 @@ import me.Plugins.Dowsing.Objects.Node;
 import me.Plugins.Dowsing.Utils.Database;
 import me.Plugins.Dowsing.Utils.ItemCreator;
 import me.Plugins.Dowsing.Utils.TabCompletion;
+import me.Plugins.SimpleFactions.Guild.income.Ledger;
 
 public class DowsingMain extends JavaPlugin{
 	FileConfiguration config = getConfig();
@@ -53,6 +54,7 @@ public class DowsingMain extends JavaPlugin{
 		startManagers();
 		db.loadGuildCapacity();
 		db.loadNodes();
+		Ledger.setNodeUpkeepLookup(NodeManager::getTotalUpkeep);
 		getServer().getPluginManager().registerEvents(resourceManager, plugin);
 		getServer().getPluginManager().registerEvents(nodeManager, plugin);
 		getCommand(commands.cmd1).setExecutor(commands);
@@ -60,6 +62,7 @@ public class DowsingMain extends JavaPlugin{
 	}
 	@Override
 	public void onDisable() {
+		Ledger.setNodeUpkeepLookup(null);
 		db.deleteDatabase();
 		for(Node n : NodeManager.nodes) {
 			db.saveNode(n);

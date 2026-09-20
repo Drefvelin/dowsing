@@ -66,6 +66,18 @@ public class NodeManager implements Listener{
 		return getExtraCapacity(g) < me.Plugins.SimpleFactions.Cache.maxExtraNodeCapacity;
 	}
 
+	public static double getTotalUpkeep(Guild g) {
+		if (g == null) return 0;
+		double total = 0;
+		for (Node n : nodes) {
+			if (!n.hasGuild()) continue;
+			if (!n.getGuild().getId().equalsIgnoreCase(g.getId())) continue;
+			Double upkeep = n.getUpkeep();
+			if (upkeep != null) total += upkeep;
+		}
+		return total;
+	}
+
 	public static Integer getNodeAmount(Guild g) {
 		Integer i = 0;
 		if(g == null) return i;
