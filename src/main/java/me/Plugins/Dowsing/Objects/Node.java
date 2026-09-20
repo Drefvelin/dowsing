@@ -40,6 +40,7 @@ public class Node {
 	Integer cycleTime;
 	Integer modifiedTime;
 	Integer yield;
+	Double yieldPercent;
 	Double wealthModifier;
 	Double prestigeGain;
 	NodeType currentType;
@@ -136,7 +137,15 @@ public class Node {
 		this.currentType = currentType;
 	}
 	public Integer getYield() {
-		return yield;
+		double base = yield == null ? 0 : yield;
+		double percent = yieldPercent == null ? 0.0 : yieldPercent;
+		return Math.max(0, (int) Math.round(base * (1.0 + percent / 100.0)));
+	}
+	public Integer getBaseYield() {
+		return yield == null ? 0 : yield;
+	}
+	public Double getYieldPercent() {
+		return yieldPercent == null ? 0.0 : yieldPercent;
 	}
 	public void setYield(Integer yield) {
 		this.yield = yield;
@@ -263,6 +272,7 @@ public class Node {
 		this.isActive = false;
 		this.level = 1;
 		this.yield = 0;
+		this.yieldPercent = 0.0;
 		this.timeModifier = 0.0;
 		this.prestigeGain = 0.0;
 		this.wealthModifier = 0.0;
@@ -291,6 +301,7 @@ public class Node {
 		this.isActive = active;
 		this.level = lvl;
 		this.yield = 0;
+		this.yieldPercent = 0.0;
 		this.timeModifier = 0.0;
 		this.addedDrops = new ArrayList<String>();
 		this.extraction = 0;
@@ -330,6 +341,7 @@ public class Node {
 			p.closeInventory();
 		}
 		guild = null;
+		NodeManager.requestNodeBenefitSync();
 	}
 
 	public void tick() {
@@ -439,6 +451,7 @@ public class Node {
 		this.timeLeft = this.modifiedTime;
 		this.cycleTime = 0;
 		ng.takeInputs(this);
+		NodeManager.requestNodeBenefitSync();
 	}
 	public void deActivate() {
 		this.isActive = false;
@@ -448,6 +461,7 @@ public class Node {
 				refund();
 			}
 		}
+		NodeManager.requestNodeBenefitSync();
 	}
 
 	public void growEfficiency() {
@@ -481,11 +495,13 @@ public class Node {
 	public void update() {
 		if(isClaimable()) return;
 		this.yield = 0;
+		this.yieldPercent = 0.0;
 		this.timeModifier = 0.0;
 		this.addedDrops = new ArrayList<String>();
 		this.extraction = 0;
 		this.naturalYield = 0;
 		this.upkeep = 0.0;
+		this.prestigeGain = 0.0;
 		try {
 			this.naturalYield = getNaturalYieldFromChunk(this.currentType.getResource(), this.loc);
 		} catch (IOException e) {
@@ -586,6 +602,8 @@ public class Node {
 			timeModifier = timeModifier+Double.parseDouble(e.split("\\(")[1].replace(")", ""));
 		} else if(type.equalsIgnoreCase("yield")) {
 			yield = yield+Integer.parseInt(e.split("\\(")[1].replace(")", ""));
+		} else if(type.equalsIgnoreCase("yield_percent")) {
+			yieldPercent = yieldPercent+Double.parseDouble(e.split("\\(")[1].replace(")", ""));
 		} else if(type.equalsIgnoreCase("add_drop")) {
 			String[] drop = DropPaths.parseAddDropEffect(e);
 			if(drop != null) {
@@ -595,6 +613,8 @@ public class Node {
 			extraction = extraction+Integer.parseInt(e.split("\\(")[1].replace(")", ""));
 		} else if(type.equalsIgnoreCase("upkeep")) {
 			upkeep = upkeep+Double.parseDouble(e.split("\\(")[1].replace(")", ""));
+		} else if(type.equalsIgnoreCase("prestige")) {
+			prestigeGain = prestigeGain+getAddedPrestige(e);
 		}
 	}
 	public Integer getNaturalYieldFromChunk(String resource, Location l) throws IOException {
@@ -636,5 +656,6 @@ public class Node {
 		ItemDropper dropper = new ItemDropper();
 		dropper.dropItem(loc, path, false);
 		loc.getWorld().playSound(loc, Sound.ENTITY_GLOW_ITEM_FRAME_REMOVE_ITEM, 0.5f, 1f);
+		NodeManager.requestNodeBenefitSync();
 	}
 }

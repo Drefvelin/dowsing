@@ -70,7 +70,7 @@ public class InventoryManager {
 			if(pm.getId().equalsIgnoreCase(slot.getActivePm().getId())) {
 				item = new ItemStack(item);
 				ItemMeta m = item.getItemMeta();
-				m.addEnchant(Enchantment.DURABILITY, 1, false);
+				m.addEnchant(Enchantment.UNBREAKING, 1, false);
 				m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 				List<String> lore = m.getLore();
 				lore.add(" ");
@@ -122,7 +122,7 @@ public class InventoryManager {
 			if(t.getId().equalsIgnoreCase(n.getCurrentType().getId())) {
 				item = new ItemStack(item);
 				ItemMeta m = item.getItemMeta();
-				m.addEnchant(Enchantment.DURABILITY, 1, false);
+				m.addEnchant(Enchantment.UNBREAKING, 1, false);
 				m.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 				List<String> lore = m.getLore();
 				lore.add(" ");
