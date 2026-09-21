@@ -413,13 +413,16 @@ public class NodeManager implements Listener{
 				}
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1f, 1f);
 				inv.typeView(p, n);
-			} else if(e.getSlot() == 24) {
+			} else if(e.getSlot() == 24 && e.getClickedInventory() == e.getView().getTopInventory()) {
 				if(canPurchaseCapacity(g)) {
 					purchaseCapacity(p, g, n, e.getClickedInventory());
-				} else if(e.getCurrentItem().getType().equals(Material.NETHER_STAR)) {
-					p.sendMessage("§cAlready purchased the maximum extra capacity");
-					p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
-					return;
+				} else {
+					ItemStack current = e.getCurrentItem();
+					if(current != null && current.getType().equals(Material.NETHER_STAR)) {
+						p.sendMessage("§cAlready purchased the maximum extra capacity");
+						p.playSound(p.getLocation(), Sound.ENTITY_VILLAGER_NO, 1f, 1f);
+						return;
+					}
 				}
 			} else if(e.getSlot() == 26) {
 				if(n.getIsActive()) {
